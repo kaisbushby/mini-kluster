@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin-user
+  namespace: mongodb
+type: Opaque
+stringData:
+  password: s1cret0
+
+---
+
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: mongodb
+  namespace: mongodb
+spec:
+  members: 3
+  type: ReplicaSet
+  version: "6.0.11"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: admin
+      db: admin
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: admin-user
+      roles:
+        - name: clusterAdmin
+          db: admin
+        - name: userAdminAnyDatabase
+          db: admin
+      scramCredentialsSecretName: my-scram
+  additionalMongodConfig:
+    storage.wiredTiger.engineConfig.journalCompressor: zlib

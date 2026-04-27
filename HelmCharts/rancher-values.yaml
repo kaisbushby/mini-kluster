@@ -1,0 +1,23 @@
+hostname: rancher.homelab.kbushby.com
+ingress:
+  ingressClassName: nginx
+  pathType: "Prefix"
+  extraAnnotations:
+    external-dns.alpha.kubernetes.io/hostname: rancher.homelab.kbushby.com
+    cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+    cert-manager.io/common-name: rancher.homelab.kbushby.com
+    cert-manager.io/certificate-name: rancher-tls
+  tls:
+    source: "secret"
+    secretName: rancher-tls
+
+# Using existing CertManager/LetsEncrypt via annotations
+#letsEncrypt:
+#  environment: production
+#  email: "kaisbushby@gmail.com"
+#  ingress:
+#    class: "cilium"
+
+bootstrapPassword: "admin"
+
+# helm upgrade --install rancher rancher-stable/rancher --namespace cattle-system -f rancher-values.yaml --history-max=3

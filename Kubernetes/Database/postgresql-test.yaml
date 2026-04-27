@@ -1,0 +1,36 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgresql-testdb
+  namespace: databases
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.3-4
+  storage:
+    size: 1Gi
+    storageClass: rook-ceph-block
+  monitoring:
+    enablePodMonitor: true
+  bootstrap:
+    initdb:
+      database: mydatabase
+      # Secret with the password will be auto generated
+      owner: testuser
+# Backup to external Minio (Optional)
+#  backup:
+#    barmanObjectStore:
+#      data:
+#        compression: bzip2
+#      wal:
+#        compression: bzip2
+#        maxParallel: 8
+#      destinationPath: s3://k3s-barman/keycloak-db
+#      endpointURL: https://${S3_BACKUP_SERVER}:9091
+#      s3Credentials:
+#        accessKeyId:
+#          name: keycloak-minio-secret
+#          key: AWS_ACCESS_KEY_ID
+#        secretAccessKey:
+#          name: keycloak-minio-secret
+#          key: AWS_SECRET_ACCESS_KEY
+#    retentionPolicy: "30d" 

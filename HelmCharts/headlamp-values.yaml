@@ -1,0 +1,42 @@
+
+#config:
+#  oidc:
+#    # Fix to use Hashicorp Vault
+#    clientID: "headlamp-oidc"
+#    clientSecret: "67KU9DZB6IoaUlXeRWdTUHupviZNXAQS"
+#    #issuerURL: "http://keycloak-service.keycloak.svc.cluster.local/realms/master"
+#    issuerURL: "https://iam.homelab.kbushby.com/realms/master"
+#    scopes: "openid profile email"
+#    callbackURL: "https://dashboard.homelab.kbushby.com/oidc-callback"
+
+# Ingress Settings
+ingress:
+  enabled: true
+  ingressClassName: nginx
+
+  # Host name of web app
+  hosts:
+    - host: dashboard.homelab.kbushby.com
+      paths:
+        - path: /
+          type: Prefix
+
+  # TLS Secret name
+  tls:
+    - secretName: headlamp-tls
+      hosts:
+        - dashboard.homelab.kbushby.com
+
+  # Service Annotations
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: dashboard.homelab.kbushby.com
+    cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+    cert-manager.io/common-name: dashboard.homelab.kbushby.com
+    # Fix later
+    #nginx.ingress.kubernetes.io/auth-signin: https://oauth2-proxy.homelab.kbushby.com/oauth2/start?rd=$escaped_request_uri
+    #nginx.ingress.kubernetes.io/auth-url: http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth
+    #nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+    #nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+
+# helm upgrade --install mini-headlamp headlamp/headlamp --namespace kube-system -f headlamp-values.yaml --history-max=3
+# kubectl create token mini-headlamp --namespace kube-system

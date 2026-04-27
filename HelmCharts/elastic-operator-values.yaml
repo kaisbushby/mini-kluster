@@ -1,0 +1,1 @@
+# helm upgrade --install elastic-operator elastic/eck-operator --namespace elastic -f elastic-operator-values.yaml --history-max=3

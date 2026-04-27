@@ -1,0 +1,60 @@
+operatorNamespace: "rook-ceph"
+
+toolbox:
+  enabled: true
+
+monitoring:
+  enabled: true
+  createPrometheusRules: true
+
+cephClusterSpec:
+  dataDirHostPath: "/var/lib/rook"
+
+  cleanupPolicy:
+    # remove later
+    allowUninstallWithVolumes: true
+
+  placement:
+    all:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+              - key: dedicated
+                operator: DoesNotExist
+  dashboard:
+    enabled: true
+    urlPrefix: "/"
+    # SSL will be handled by Ingress
+    ssl: false
+
+  storage:
+    useAllNodes: true
+    useAllDevices: true
+
+ingress:
+  dashboard:
+    ingressClassName: nginx
+    host:
+      name: dashboard.ceph.homelab.kbushby.com
+      path: /
+      pathType: Prefix
+
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: dashboard.ceph.homelab.kbushby.com
+      cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+      cert-manager.io/common-name: dashboard.ceph.homelab.kbushby.com
+      # Fix later
+      #nginx.ingress.kubernetes.io/auth-signin: https://oauth2-proxy.homelab.kbushby.com/oauth2/start?rd=https://$host$request_uri
+      #nginx.ingress.kubernetes.io/auth-url: http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth
+      #nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+      #nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+    tls:
+      - hosts:
+        - dashboard.ceph.homelab.kbushby.com
+        secretName: dashboard-ceph-tls
+
+# Resource allocation guide:
+# https://oneuptime.com/blog/post/2026-03-31-rook-resource-limits-requests/view
+
+# helm upgrade --install --create-namespace --namespace rook-ceph rook-ceph-cluster rook-release/rook-ceph-cluster -f rook-ceph-cluster-values.yaml

@@ -1,0 +1,46 @@
+# This would generate a Secret called "kbushby-certificate-xxxx"
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kbushbycom-certificate
+  namespace: default # Or any namespace where you want to test
+spec:
+  secretName: test-certificate-tls
+  issuerRef:
+    name: cloudflare-ca-issuer
+    kind: ClusterIssuer
+  commonName: "kbushby.com" # Use a test domain you control
+  dnsNames:
+  - "kbushby.com"
+  - "*.kbushby.com"
+  - "*.homelab.kbushby.com"
+  additionalOutputFormats:
+  - type: CombinedPEM
+  - type: DER
+
+  #ca.crt: <PEM CA certificate>
+  #tls.key: <PEM private key>
+  #tls.crt: <PEM signed certificate chain>
+  #tls-combined.pem: <PEM private key + "\n" + PEM signed certificate chain>
+  #key.der: <DER binary format of private key>
+
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: cloudflare-ca-issuer
+spec:
+  acme:
+    email: kaisbushby@gmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    #server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Generates a Secert containing a TLS key under this name
+      name: cluster-issuer-account-key
+    solvers:
+    - dns01:
+        cloudflare:
+          email: kaisbushby@gmail.com
+          apiTokenSecretRef:
+            name: cloudflare-api-token-secret
+            key: api-token

@@ -1,0 +1,1 @@
+ kubectl exec -it netshoot-pod netshoot -- ping 8.8.8.8

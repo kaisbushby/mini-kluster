@@ -1,0 +1,50 @@
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "nginx-ingress-pool"
+  namespace: kube-system
+spec:
+  blocks:
+    # 	192.168.24.1 - 192.168.25.254
+    #   512 Hosts
+    - cidr: "192.168.24.0/23"
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "staging-lb-pool"
+  namespace: kube-system
+spec:
+  blocks:
+    #   192.168.26.1 - 192.168.27.254
+    #   512 Hosts
+    - cidr: "192.168.26.0/23"
+  serviceSelector:
+    matchLabels:
+      environment: "staging"
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "production-lb-pool"
+  namespace: kube-system
+spec:
+  blocks:
+    #   192.168.28.1 - 192.168.29.254
+    #   512 Hosts
+    - cidr: "192.168.28.0/23"
+  serviceSelector:
+    matchLabels:
+      environment: "production"
+---
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: default-l2-announcement-policy
+  namespace: kube-system
+spec:
+  interfaces:
+    - "^eno[0-9]+"
+  externalIPs: true
+  loadBalancerIPs: true

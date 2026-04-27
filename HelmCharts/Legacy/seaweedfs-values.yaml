@@ -1,0 +1,155 @@
+global.seaweedfs.enableSecurity: true
+
+
+master:
+  replicas: 1
+  #  replication type is XYZ:
+  # X number of replica in other data centers
+  # Y number of replica in other racks in the same data center
+  # Z number of replica in other servers in the same rack
+  defaultReplication: "000"
+  data:
+    type: "persistentVolumeClaim"
+    size: "5Gi"
+    storageClass: "longhorn"
+  logs:
+    type: "persistentVolumeClaim"
+    size: "5Gi"
+    storageClass: "longhorn"
+
+volume:
+  dataDirs:
+    - name: longhorn-data
+      type: "persistentVolumeClaim"
+      storageClass: "longhorn"
+      size: "240Gi"
+      maxVolumes: 0
+  # This will automatically create a job for patching Kubernetes resources if the dataDirs type is 'persistentVolumeClaim' and the size has changed.
+  resizeHook:
+    enabled: true
+    image: alpine/k8s:1.28.4
+
+filer:
+  data:
+    type: "persistentVolumeClaim"
+    size: "5Gi"
+    storageClass: "longhorn"
+  logs:
+    type: "persistentVolumeClaim"
+    size: "5Gi"
+    storageClass: "longhorn"
+
+s3:
+  enabled: true
+  # enableAuth: true
+  tlsSecret: s3-seaweedfs-tls
+  domainName: s3.seaweedfs.homelab.kbushby.com
+
+  logs:
+    type: "persistentVolumeClaim"
+    size: "5Gi"
+    storageClass: "longhorn"
+
+  ingress:
+    enabled: true
+    className: "cilium"
+    # host: false for "*" hostname, or an array for multiple hostnames
+    host: "s3.seaweedfs.homelab.kbushby.com"
+    path: "/"
+    pathType: Prefix
+    # additional ingress annotations for the s3 endpoint
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: s3.seaweedfs.homelab.kbushby.com
+      cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+      cert-manager.io/common-name: s3.seaweedfs.homelab.kbushby.com
+    tls:
+      - hosts:
+        - s3.seaweedfs.homelab.kbushby.com
+        secretName: s3-seaweedfs-tls
+
+
+worker:
+  enabled: true
+  replicas: 2  # Scale based on workload
+  jobType: "vacuum,volume_balance,erasure_coding"  # Job types this worker can handle
+  maxDetect: 1  # Maximum concurrent detection requests
+  maxExecute: 4  # Maximum concurrent execution jobs per worker
+
+  # Working directory for task execution
+  # Default: "/tmp/seaweedfs-worker"
+  # Note: /tmp is ephemeral - use persistent storage (hostPath/existingClaim) for long-running tasks
+  workingDir: "/tmp/seaweedfs-worker"
+
+  # Optional: configure admin server address
+  # If not specified, auto-discovers from admin service in the same namespace by looking for
+  # a service named "<release-name>-admin" (e.g., "seaweedfs-admin").
+  # Auto-discovery only works if the admin is in the same namespace and same Helm release.
+  # For cross-namespace or separate release scenarios, explicitly set this value.
+  # Example: If main SeaweedFS is deployed in "production" namespace:
+  #   adminServer: "seaweedfs-admin.production.svc:33646"
+  adminServer: ""
+
+  # Workers need storage for task execution
+  # Note: Workers use a Deployment, which does not support `volumeClaimTemplates` 
+  # for dynamic PVC creation per pod. To use persistent storage, you must 
+  # pre-provision a PersistentVolumeClaim and use `type: "existingClaim"`.
+  data:
+    type: "existingClaim"  # Options: "emptyDir", "hostPath", or "existingClaim"
+  #  hostPathPrefix: /storage  # For hostPath
+    claimName: "worker-pvc"  # For existingClaim with pre-provisioned PVC
+
+  # Resource limits for worker pods
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+
+admin:
+  enabled: true
+  port: 23646
+  grpcPort: 33646  # For worker connections
+  secret:
+    adminUser: "admin"
+    adminPassword: "admin"  # Leave empty to disable auth
+
+  # Optional: persist admin data
+  data:
+    type: "persistentVolumeClaim"
+    size: "5Gi"
+    storageClass: "longhorn"
+
+  # Optional: enable ingress
+  ingress:
+    enabled: true
+    host: "admin.seaweedfs.homelab.kbushby.com"
+    className: "cilium"
+
+    ## TLS Secret Name
+    tlsSecret: admin-seaweedfs-tls
+
+    ## Default ingress path
+    path: /
+    pathType: "Prefix"
+
+    ## Ingress annotations
+    annotations:
+      # Enable basic auth
+      #nginx.ingress.kubernetes.io/auth-type: basic
+      # Secret defined in nginx namespace
+      #nginx.ingress.kubernetes.io/auth-secret: nginx/basic-auth-secret
+      # Enable cert-manager to create automatically the SSL certificate and store in Secret
+      # Possible Cluster-Issuer values:
+      #   * 'letsencrypt-issuer' (valid TLS certificate using IONOS API)
+      #   * 'ca-issuer' (CA-signed certificate, not valid)
+      external-dns.alpha.kubernetes.io/hostname: admin.seaweedfs.homelab.kbushby.com
+      cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+      cert-manager.io/common-name: admin.seaweedfs.homelab.kbushby.com
+    tls:
+      - hosts:
+        - admin.seaweedfs.homelab.kbushby.com
+        secretName: admin-seaweedfs-tls
+
+# helm upgrade --install seaweedfs seaweedfs/seaweedfs --namespace seaweedfs -f seaweedfs-values.yaml --history-max=3

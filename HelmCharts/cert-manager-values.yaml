@@ -1,0 +1,8 @@
+config:
+  kind: "ControllerConfiguration"
+  enableGatewayAPI: true
+crds:
+  enabled: true
+dns01RecursiveNameserversOnly: true
+dns01RecursiveNameservers: "1.1.1.1:53,8.8.8.8:53"
+# helm install cert-manager jetstack/cert-manager --namespace cert-manager -f cert-manager-values.yaml

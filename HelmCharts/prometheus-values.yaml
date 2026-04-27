@@ -1,0 +1,367 @@
+# Produce cleaner resources names
+cleanPrometheusOperatorObjectNames: true
+
+# AlertManager configuration
+alertmanager:
+  alertmanagerSpec:
+    ##
+    ## Configure access to AlertManager
+    externalUrl: http://alertmanager.homelab.kbushby.com
+    ##
+    ## HA configuration: Replicas
+    ## Number of Alertmanager POD replicas
+    replicas: 1
+    ##
+    ## POD Storage Spec
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: rook-ceph-block
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 5Gi
+    ##
+  ## Configure Ingress
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      # ExternalDNS entry
+      external-dns.alpha.kubernetes.io/hostname: alertmanager.homelab.kbushby.com
+      # Enable cert-manager to create automatically the SSL certificate and store in Secret
+      cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+      cert-manager.io/common-name: alertmanager.homelab.kbushby.com
+      # Enable OAuth2-Proxy security
+      nginx.ingress.kubernetes.io/auth-signin: https://oauth2-proxy.homelab.kbushby.com/oauth2/start?rd=https://$host$request_uri
+      nginx.ingress.kubernetes.io/auth-url: http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+      nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+    path: /
+    pathType: Prefix
+    hosts:
+      - alertmanager.homelab.kbushby.com
+    tls:
+      - hosts:
+        - alertmanager.homelab.kbushby.com
+        secretName: alertmanager-tls
+
+# Prometheus configuration
+prometheus:
+  prometheusSpec:
+    ##
+    ## Removing default filter Prometheus selectors
+    ## Default selector filters defined by default in helm chart.
+    ## matchLabels:
+    ##   release: {{ $.Release.Name | quote }}
+    ## ServiceMonitor, PodMonitor, Probe and Rules need to have label 'release' equals to kube-prom-stack helm release (kube-prom-stack)
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    scrapeConfigSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    ##
+    ## EnableAdminAPI enables Prometheus the administrative HTTP API which includes functionality such as deleting time series.
+    ## This is disabled by default. --web.enable-admin-api command line
+    ## ref: https://prometheus.io/docs/prometheus/latest/querying/api/#tsdb-admin-apis
+    enableAdminAPI: true
+    ##
+    ## Configure access to Prometheus via hostname
+    ## --web.external-url and --web.route-prefix Prometheus command line parameters
+    externalUrl: https://prometheus.homelab.kbushby.com
+    routePrefix: /
+    ##
+    ## HA configuration: Replicas & Shards
+    ## Number of replicas of each shard to deploy for a Prometheus deployment.
+    ## Number of replicas multiplied by shards is the total number of Pods created.
+    replicas: 1
+    shards: 1
+    ##
+    ## TSDB Configuration
+    ## ref: https://prometheus.io/docs/prometheus/latest/storage/#operational-aspects
+    # Enable WAL compression
+    walCompression: true
+    # Retention data configuration
+    retention: 7d
+    retentionSize: 10GB
+    ## Enable Experimental Features
+    # ref: https://prometheus.io/docs/prometheus/latest/feature_flags/
+    enableFeatures:
+      # Enable Memory snapshot on shutdown.
+      - memory-snapshot-on-shutdown
+    ##
+    ## Limit POD Resources
+    resources:
+      requests:
+        cpu: 100m
+      limits:
+        memory: 4000Mi
+    ##
+    ## POD Storage Spec
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: rook-ceph-block
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+  ##
+  ## Configuring Ingress
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    # Values can be templated
+    annotations:
+      # TODO: Add OAuth2-Proxy Annotation here
+      # ExternalDNS entry
+      external-dns.alpha.kubernetes.io/hostname: prometheus.homelab.kbushby.com
+      # Enable cert-manager to create automatically the SSL certificate and store in Secret
+      cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+      cert-manager.io/common-name: prometheus.homelab.kbushby.com
+
+      # OAuth2-Proxy config
+      nginx.ingress.kubernetes.io/auth-signin: https://oauth2-proxy.homelab.kbushby.com/oauth2/start?rd=https://$host$request_uri
+      nginx.ingress.kubernetes.io/auth-url: http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+      nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+    path: /
+    pathType: Prefix
+    hosts:
+      - prometheus.homelab.kbushby.com
+    tls:
+      - hosts:
+        - prometheus.homelab.kbushby.com
+        secretName: prometheus-tls
+
+# Prometheus Node Exporter Configuration
+prometheus-node-exporter:
+  fullnameOverride: node-exporter
+
+# Kube-State-Metrics Configuration
+kube-state-metrics:
+  fullnameOverride: kube-state-metrics
+
+# Grafana Configuration
+grafana:
+  fullnameOverride: grafana
+  # Admin user password
+  adminPassword: "s1cret0"
+  # grafana configuration
+  grafana.ini:
+    server:
+      domain: grafana.homelab.kbushby.com
+      root_url: "%(protocol)s://%(domain)s:%(http_port)s/"
+      # When serve_from_subpath is enabled, internal requests from e.g. prometheus get redirected to the defined root_url.
+      # This is causing prometheus to not be able to scrape metrics because it accesses grafana via the kubernetes service name and is then redirected to the public url
+      # To make Prometheus work, disable server_from_sub_path and add rewrite rule in NGINX proxy
+      # ref: https://github.com/grafana/grafana/issues/72577#issuecomment-1682277779
+      serve_from_sub_path: false
+  ##
+  ## Provisioning sidecars
+  ##
+  sidecar:
+    dashboards:
+      # Enable dashboard sidecar
+      enabled: true
+      # Enable discovery in all namespaces
+      searchNamespace: ALL
+      # Search for ConfigMaps containing `grafana_dashboard` label
+      label: grafana_dashboard
+      # Annotation containing the folder where sidecar will place the dashboard.
+      folderAnnotation: grafana_folder
+      provider:
+        # disableDelete to activate a import-only behaviour
+        disableDelete: true
+        # allow Grafana to replicate dashboard structure from filesystem
+        foldersFromFilesStructure: true
+    datasources:
+      # Enable datasource sidecar
+      enabled: true
+      # Enable discovery in all namespaces
+      searchNamespace: ALL
+      # Search for ConfigMaps containing `grafana_datasource` label
+      label: grafana_datasource
+      labelValue: "1"
+      ## Grafana Ingress configuration
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    # Values can be templated
+    annotations:
+      # ExternalDNS entry
+      external-dns.alpha.kubernetes.io/hostname: grafana.homelab.kbushby.com
+      # Enable cert-manager to create automatically the SSL certificate and store in Secret
+      cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+      cert-manager.io/common-name: grafana.homelab.kbushby.com
+    path: /
+    pathType: Prefix
+    hosts:
+      - grafana.homelab.kbushby.com
+    tls:
+      - hosts:
+        - grafana.homelab.kbushby.com
+        secretName: grafana-tls
+
+# Kubernetes Monitoring
+## Kubelet
+##
+# Enable kubelet service
+kubeletService:
+  ## Prometheus Operator creates Kubelet service
+  ## Prometheus Operator started with options
+  ## `--kubelet-service=kube-system/kube-prometheus-stack-kubelet`
+  ## `--kubelet-endpoints=true`
+  enabled: true
+  namespace: kube-system
+
+## Configuring Kubelet Monitoring
+kubelet:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
+## Kube API
+## Configuring Kube API monitoring
+kubeApiServer:
+  enabled: true
+  serviceMonitor:
+    # Enable Service Monitor
+    enabled: true
+
+## Kube Controller Manager
+kubeControllerManager:
+  ## K3s controller manager is not running as a POD
+  ## ServiceMonitor and Headless service is generated
+  ## headless service is needed, So prometheus can discover each of the endpoints/PODs behind the service.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+  ## Required headless service to extract the metrics the service need to be defined without selector and so the endpoints must be defined explicitly
+  ##
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
+
+  # Enable KubeController manager montoring
+  enabled: true
+  # endpoints : IP addresses of K3s control plane nodes
+  endpoints:
+    - 192.168.20.11
+    - 192.168.20.12
+    - 192.168.20.13
+  service:
+    # Enable creation of service
+    enable: true
+  serviceMonitor:
+    # Enable and configure Service Monitor
+    enabled: true
+
+## Etcd monitoring
+kubeEtcd:
+  enabled: true
+  # K3s etcd not running as a POD, so endpoints need to be configured
+  endpoints:
+    - 192.168.20.11
+    - 192.168.20.12
+    - 192.168.20.13
+  service:
+    enabled: true
+    port: 2381
+    targetPort: 2381
+
+## Kube Scheduler
+kubeScheduler:
+  ## K3s Kube-scheduler is not running as a POD
+  ## ServiceMonitor and Headless service is generated
+  ## headless service is needed, So prometheus can discover each of the endpoints/PODs behind the service.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+  ## Required headless service to extract the metrics the service need to be defined without selector and so the endpoints must be defined explicitly
+  ##
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
+  enabled: true
+  # K3s kube-scheduler not running as a POD
+  # Required headless service to extract the metrics the service need to be defined without selector and so the endpoints must be defined explicitly
+  #
+  # ref: https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
+  endpoints:
+    - 192.168.20.11
+    - 192.168.20.12
+    - 192.168.20.13
+  serviceMonitor:
+    enabled: true
+
+kubeProxy:
+  ## K3s kube-proxy is not running as a POD
+  ## ServiceMonitor and Headless service is generated
+  ## headless service is needed, So prometheus can discover each of the endpoints/PODs behind the service.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+  ## Required headless service to extract the metrics the service need to be defined without selector and so the endpoints must be defined explicitly
+  ##
+  enabled: true
+  # K3s kube-proxy not running as a POD
+  endpoints:
+    - 192.168.20.11
+    - 192.168.20.12
+    - 192.168.20.13
+    - 192.168.20.111
+    - 192.168.20.112
+    - 192.168.20.113
+    - 192.168.1.12
+  serviceMonitor:
+    enabled: true
+
+## Core DNS monitoring
+##
+coreDns:
+  enabled: true
+  # Creates headless service to get accest to all coreDNS Pods
+  service:
+    enabled: true
+    port: 9153
+  # Enable service monitor
+  serviceMonitor:
+    enabled: true
+
+
+## Vault and Lonhorn Monitoring
+## 
+#prometheus:
+#  prometheusSpec:
+#    serviceMonitorSelectorNilUsesHelmValues: false
+# 
+#    podMetadata:
+#      annotations:
+#        vault.hashicorp.com/agent-inject: "true"
+#        vault.hashicorp.com/agent-init-first: "true"
+#        vault.hashicorp.com/agent-inject-token: "true"
+#        vault.hashicorp.com/role: "prometheus"
+#        # Run agent as group 2000, same group used by Prometheus process. Grant read access to token file.
+#        vault.hashicorp.com/agent-run-as-group: "2000"
+#
+#    additionalScrapeConfigs:
+#    - job_name: vault
+#      metrics_path: /v1/sys/metrics
+#      params:
+#        format: ['prometheus']
+#      scheme: https
+#      authorization:
+#        credentials_file: /vault/secrets/token
+#      static_configs:
+#      - targets: [vault.homelab.kbushby.com:8200]
+#
+#    - job_name: 'longhorn'
+#    # Service discovery from Kubernetes
+#      kubernetes_sd_configs:
+#        - role: endpoints
+#          namespaces:
+#            names:
+#              - longhorn-system
+#    # Only scrape the Longhorn manager endpoints
+#      relabel_configs:
+#        - source_labels: [__meta_kubernetes_service_label_app]
+#          action: keep
+#          regex: longhorn-manager
+#        - source_labels: [__meta_kubernetes_endpoint_port_name]
+#          action: keep
+#          regex: manager
+
+# helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack -f prometheus-values.yaml --namespace kube-prom-stack --create-namespace --history-max=3
+

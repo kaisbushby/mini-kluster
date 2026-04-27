@@ -1,0 +1,58 @@
+defaultSettings:
+  defaultDataPath: "/storage"
+  storageMinimalAvailablePercentage: 10
+
+# Gateway Resource. Longhorn dashboard.
+#httproute:
+#  enabled: true
+#  hostnames:
+#    - longhorn.homelab.kbushby.com
+#  parentRefs:
+#    -
+#  path: /
+#  annotations:
+#    cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+#    cert-manager.io/common-name: longhorn.homelab.kbushby.com
+
+# Ingress Resource. Longhorn dashboard.
+ingress:
+  ## Enable creation of ingress resource
+  enabled: true
+  ## Add ingressClassName to the Ingress
+  ingressClassName: cilium
+
+  # ingress host
+  host: longhorn.homelab.kbushby.com
+
+  ## Set this to true in order to enable TLS on the ingress record
+  tls: true
+
+  ## TLS Secret Name
+  tlsSecret: longhorn-tls
+
+  ## Default ingress path
+  path: /
+  pathType: "Prefix"
+
+  ## Ingress annotations
+  annotations:
+    # Enable basic auth
+    #nginx.ingress.kubernetes.io/auth-type: basic
+    # Secret defined in nginx namespace
+    #nginx.ingress.kubernetes.io/auth-secret: nginx/basic-auth-secret
+    # Enable cert-manager to create automatically the SSL certificate and store in Secret
+    # Possible Cluster-Issuer values: 
+    #   * 'letsencrypt-issuer' (valid TLS certificate using IONOS API) 
+    #   * 'ca-issuer' (CA-signed certificate, not valid)
+    external-dns.alpha.kubernetes.io/hostname: longhorn.homelab.kbushby.com
+    cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+    cert-manager.io/common-name: longhorn.homelab.kbushby.com
+
+# helm install longhorn longhorn/longhorn --namespace longhorn-system -f longhorn-values.yaml
+# helm upgrade longhorn longhorn/longhorn --namespace longhorn-system -f longhorn-values.yaml --history-max=3
+
+
+# Service Monitor for Prometheus
+metrics:
+  serviceMonitor:
+    enabled: true

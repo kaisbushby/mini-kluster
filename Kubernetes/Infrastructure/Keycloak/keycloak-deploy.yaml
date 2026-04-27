@@ -1,0 +1,98 @@
+apiVersion: k8s.keycloak.org/v2beta1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  # Number of instances in the cluster
+  instances: 2
+  # External Database connection
+  db:
+    vendor: postgres
+    host: keycloak-db-rw
+    port: 5432
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db-secret
+      key: username
+    passwordSecret:
+      name: keycloak-db-secret
+      key: password
+
+  # Bootstrap admin account
+  bootstrapAdmin:
+    user:
+      secret: keycloak
+  # Enabling HTTP communications
+  # Keycloak behing HTTP Proxy closing TLS connections
+  http:
+    httpEnabled: true
+  hostname:
+    hostname: https://iam.homelab.kbushby.com
+    strict: true
+    # Enabling back channel
+    backchannelDynamic: true
+  proxy:
+    headers: xforwarded # double check your reverse proxy sets and overwrites the X-Forwarded-* headers
+  # Do not create ingress
+  # External exposure is configured separately with a Gateway API HTTPRoute.
+  ingress:
+    enabled: false
+  additionalOptions: # Add config from here https://www.keycloak.org/server/all-config
+    # Enable metrics endpoint
+    - name: metrics-enabled
+      value: 'true'
+      # Enable cache metrics histograms
+    - name: cache-metrics-histograms-enabled
+      value: 'true'
+      # Enable HTTP request histograms
+    - name: http-metrics-histograms-enabled
+      value: 'true'
+      # Enable user metrics
+    - name: event-metrics-user-enabled
+      value: 'true'
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak
+  namespace: keycloak
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+    cert-manager.io/common-name: iam.homelab.kbushby.com
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: iam.homelab.kbushby.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: keycloak-service
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - iam.homelab.kbushby.com
+    secretName: keycloak-tls
+
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: keycloak-service-monitor
+  namespace: keycloak
+spec:
+  endpoints:
+    - interval: 30s
+      path: /metrics
+      port: management
+  selector:
+    matchLabels:
+      app: keycloak

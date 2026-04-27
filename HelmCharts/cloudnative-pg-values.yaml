@@ -1,0 +1,14 @@
+# Install operator CRDs
+crds:
+  create: true
+
+monitoring:
+  # Disabling podMonitoring by default. 
+  # It could be enabled per PosgreSQL Cluster resource.
+  # Enabling it requires Prometheus Operator CRDs.
+  podMonitorEnabled: false
+  # Create Grafana dashboard configmap that can be automatically loaded by Grafana.
+  grafanaDashboard:
+    create: true
+
+# helm upgrade --install cloudnative-pg cnpg/cloudnative-pg -f cloudnative-pg-values.yml --namespace databases --history-max=3

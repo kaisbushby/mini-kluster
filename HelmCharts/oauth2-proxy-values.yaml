@@ -1,0 +1,71 @@
+config:
+  # Add config annotations
+  annotations: {}
+  # OAuth client ID
+  # Follow instructions to configure Keycloak client
+  # https://oauth2-proxy.github.io/oauth2-proxy/configuration/providers/keycloak_oidc
+
+  # Oauth2 client configuration. From Keycloak configuration
+  clientID: "oauth2-proxy"
+  clientSecret: "OEaQN4bqooLPMhF9V82GwOIUVSoAzjH5"
+
+  # Cookie secret
+  # Create a new secret with the following command
+  # openssl rand -base64 32 | head -c 32 | base64
+  cookieSecret: "bG5pRDBvL0VaWis3dksrZ05vYnJLclRFb2VNcVZJYkg="
+  # The name of the cookie that oauth2-proxy will create
+  # If left empty, it will default to the release name
+  cookieName: "oauth2-proxy"
+
+  # Config file
+  configFile: |-
+    # Provider config
+    provider="keycloak-oidc"
+    provider_display_name="Keycloak"
+    redirect_url="https://oauth2-proxy.homelab.kbushby.com/oauth2/callback"
+    oidc_issuer_url="https://iam.homelab.kbushby.com/realms/master"
+    code_challenge_method="S256"
+    ssl_insecure_skip_verify=true
+    # Upstream config
+    http_address="0.0.0.0:4180"
+    upstreams="file:///dev/null"
+    email_domains=["*"]
+    cookie_domains=["homelab.kbushby.com"]
+    cookie_secure=false
+    scope="openid email profile"
+    whitelist_domains=[".homelab.kbushby.com"]
+    insecure_oidc_allow_unverified_email="true"
+
+sessionStorage:
+  # Can be one of the supported session storage cookie|redis
+  type: redis
+  redis:
+    passwordKey: "notVerySecure"
+
+# Enabling redis backend installation
+redis-ha:
+  enabled: true
+  redisPassword: "notVerySecure"
+  replicas: 2
+  # standalone redis. No cluster
+  architecture: standalone
+
+ingress:
+  enabled: true
+  className: nginx
+  pathType: Prefix
+  path: /oauth2
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: oauth2-proxy.homelab.kbushby.com
+    cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+    cert-manager.io/common-name: oauth2-proxy.homelab.kbushby.com
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+  hosts:
+    - oauth2-proxy.homelab.kbushby.com
+  tls:
+    - hosts:
+        - oauth2-proxy.homelab.kbushby.com
+      secretName: oauth2-proxy-tls
+
+
+# helm upgrade --install oauth2-proxy oauth2-proxy/oauth2-proxy -f oauth2-proxy-values.yaml --namespace oauth2-proxy --history-max=3
