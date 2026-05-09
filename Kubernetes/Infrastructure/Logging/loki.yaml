@@ -1,0 +1,10 @@
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name:  loki-ceph-secret
+  namespace: loki
+type: Opaque
+data:
+  accessKeyId: "VkNIQjE0TlNQWTA5TVAzOFJOQlQK" # VCHB14NSPY09MP38RNBT
+  secretAccessKey: "dDJ4SnkwYzZJQ2ozRFg2YXo0a1ZVQlJSSm9BQ2VwSEtHZlZybER3Mwo=" # t2xJy0c6ICj3DX6az4kVUBRRJoACepHKGfVrlDw3

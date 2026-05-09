@@ -1,22 +1,22 @@
 # This would generate a Secret called "kbushby-certificate-xxxx"
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: kbushbycom-certificate
-  namespace: default # Or any namespace where you want to test
-spec:
-  secretName: test-certificate-tls
-  issuerRef:
-    name: cloudflare-ca-issuer
-    kind: ClusterIssuer
-  commonName: "kbushby.com" # Use a test domain you control
-  dnsNames:
-  - "kbushby.com"
-  - "*.kbushby.com"
-  - "*.homelab.kbushby.com"
-  additionalOutputFormats:
-  - type: CombinedPEM
-  - type: DER
+#apiVersion: cert-manager.io/v1
+#kind: Certificate
+#metadata:
+#  name: kbushbycom-certificate
+#  namespace: default # Or any namespace where you want to test
+#spec:
+#  secretName: test-certificate-tls
+#  issuerRef:
+#    name: cloudflare-ca-issuer
+#    kind: ClusterIssuer
+#  commonName: "kbushby.com" # Use a test domain you control
+#  dnsNames:
+#  - "kbushby.com"
+#  - "*.kbushby.com"
+#  - "*.homelab.kbushby.com"
+#  additionalOutputFormats:
+#  - type: CombinedPEM
+#  - type: DER
 
   #ca.crt: <PEM CA certificate>
   #tls.key: <PEM private key>

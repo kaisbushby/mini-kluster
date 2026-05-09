@@ -82,8 +82,8 @@ prometheus:
     # Enable WAL compression
     walCompression: true
     # Retention data configuration
-    retention: 7d
-    retentionSize: 10GB
+    retention: 14d
+    retentionSize: "20GiB"
     ## Enable Experimental Features
     # ref: https://prometheus.io/docs/prometheus/latest/feature_flags/
     enableFeatures:
@@ -105,7 +105,7 @@ prometheus:
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: 10Gi
+              storage: 20Gi
 
   ##
   ## Configuring Ingress

@@ -1,0 +1,7 @@
+
+
+
+
+
+# helm upgrade --install opentelemetry-collector open-telemetry/opentelemetry-collector --namespace optel -f open-telemetry-values.yaml --history-max=3
+# helm uninstall opentelemetry-collector -n optel

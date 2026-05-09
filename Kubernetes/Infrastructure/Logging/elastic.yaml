@@ -1,0 +1,135 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: efk
+  namespace: elastic
+spec:
+  version: 8.15.0
+  nodeSets:
+  - name: default
+    count: 1    # One node elastic search cluster
+    config:
+      node.store.allow_mmap: false # Disable memory mapping
+    volumeClaimTemplates:
+      - metadata:
+          name: elasticsearch-data
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              cpu: 100m
+              storage: 5Gi
+            limits:
+              cpu: "1"
+          storageClassName: rook-ceph-block
+  auth:
+    roles:
+    - secretName: es-fluentd-roles-secret
+    - secretName: es-prometheus-roles-secret
+    fileRealm:
+    - secretName: es-fluentd-user-file-realm
+    - secretName: es-prometheus-user-file-realm
+  http:
+    tls: # Disabling TLS automatic configuration.
+      selfSignedCertificate:
+        disabled: true
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: elastic
+  namespace: elastic
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+    cert-manager.io/common-name: elasticsearch.homelab.kbushby.com
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: elasticsearch.homelab.kbushby.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: efk-es-http
+            port:
+              number: 9200
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - elasticsearch.homelab.kbushby.com
+    secretName: elasticsearch-tls
+
+---
+# Custom Roles
+# https://www.elastic.co/guide/en/cloud-on-k8s/2.0/k8s-users-and-roles.html#k8s_creating_custom_roles
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: es-fluentd-roles-secret
+  namespace: elastic
+stringData:
+  roles.yml: |-
+    fluentd_role:
+      cluster: ['manage_index_templates', 'monitor', 'manage_ilm']
+      indices:
+      - names: [ '*' ]
+        privileges: [
+          'indices:admin/create',
+          'write',
+          'create',
+          'delete',
+          'create_index',
+          'manage',
+          'manage_ilm'
+        ]
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: es-prometheus-roles-secret
+  namespace: elastic
+stringData:
+  roles.yml: |-
+    prometheus_role:
+      cluster: [
+        'monitor',
+        'monitor_snapshot'
+      ]
+      indices:
+      - names: [ '*' ]
+        privileges: [ 'monitor', 'view_index_metadata' ]
+
+---
+# Fluentd + Prometheus Users
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: es-fluentd-user-file-realm
+  namespace: elastic
+type: kubernetes.io/basic-auth
+data:
+  username: "Zmx1ZW50ZA==" # fluentd
+  password: "eTE4NkxINFdxSFlP" # y186LH4WqHYO
+  roles: "Zmx1ZW50ZF9yb2xl" # fluentd_role
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: es-prometheus-user-file-realm
+  namespace: elastic
+type: kubernetes.io/basic-auth
+data:
+  username: "cHJvbWV0aGV1cw==" # prometheus
+  password: "QTc1Ykw4OVNVTGdC" # A75bL89SULgB
+  roles: "cHJvbWV0aGV1c19yb2xl" # prometheus_role
+
+
+# Username is "elastic"
+# kubectl get secret -n elastic efk-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
+# password is: "3hDeA88qSynLgbB9DQHBRuEX"

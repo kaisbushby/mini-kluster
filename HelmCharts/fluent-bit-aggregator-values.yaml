@@ -1,0 +1,179 @@
+# Do not create serviceAccount and RBAC. Fluentd does not need to get access to kubernetes API.
+serviceAccount:
+  create: false
+rbac:
+  create: false
+
+# fluentbit is running as non root user
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# Do not mount logs directories
+mountVarLogDirectory: false
+mountDockerContainersDirectory: false
+
+# Environment variables used by Fluent Config files
+# envFrom:
+#   - configMapRef:
+#       name: fluentd-env-configmap
+#   - secretRef:
+#       name: fluentd-env-secret
+
+config:
+  service:
+    flush: 5
+    daemon: off
+    log_level: info
+
+    # Enable HTTP Server
+    http_server: true
+    http_listen: 0.0.0.0
+    http_port: 2020
+    # Enable Health Check
+    health_check: true
+
+    storage.path: /tmp/fluentbit/storage/ # Persistent buffering for reliability
+    storage.sync: full
+    storage.checksum: true
+    storage.backlog.mem_limit: 20M
+    storage.metrics: true
+
+  pipeline:
+    inputs:
+      - name: forward
+        listen: 0.0.0.0
+        port: ${FLUENT_AGGREGATOR_PORT}
+        # self_hostname: ${FLUENT_SELFHOSTNAME}
+      
+        # Optional: Add security with Shared_Key or TLS
+        # shared_key: ${FLUENT_AGGREGATOR_SHARED_KEY}
+        # tls: on
+        # tls.crt_file: /etc/fluent/certs/tls.crt
+        # tls.key_file: /etc/fluent/certs/tls.key
+
+    filters:
+      - name: modify
+        match: 'host.*'
+        Add:
+          - index_name "fluentbit-host"
+      - name: lua
+        match: kube.*
+        script: /fluent-bit/scripts/create_index_name.lua
+        call: create_index_name
+
+    outputs:
+      # Connects to Elastic Search instance
+      # Using "opensearch" instead of "es" 
+      # since "es" does not support Record Accessors for the index name  
+      - name: opensearch
+        match: "*"
+        host: efk-es-http.elastic.svc.cluster.local
+        port: 9200
+        index: $index_name
+        http_user: ${FLUENT_ELASTICSEARCH_USER}
+        http_passwd: ${FLUENT_ELASTICSEARCH_PASSWORD}
+        generate_id: on
+        suppress_type_name: on
+        trace_error: on
+      
+      - name: loki
+        host: loki-gateway.loki.svc.cluster.local
+      # - name: stdout
+      #   match: "*"
+
+luaScripts:
+  # Creates ElasticSearch index name based on app name
+  # Since coredns doesn't have an app name, using namespace instead
+  create_index_name.lua: |
+    function create_index_name(tag, timestamp, record)
+      if record["index_name"] == nil then
+        if record["app"] ~= nil then
+          record["index_name"] = "fluentbit-" .. record["app"]
+        else
+          record["index_name"] = "fluentbit-" .. record["namespace"]
+        end
+      end
+      return 1, timestamp, record
+    end
+
+# Change args to load yaml config file instead default fluent-bit.conf
+command:
+  - /fluent-bit/bin/fluent-bit
+
+## Do not create additional config maps
+##
+# configMapConfigs: []
+
+# Additional Volumes and VolumeMounts (only tls certificates and shared secrets)
+extraVolumes:
+  - name: fluent-tls
+    secret:
+      secretName: fluent-tls
+  # - name: etcfluentd-template
+  #   configMap:
+  #     name: fluentd-es-template
+  #     defaultMode: 0777
+
+extraVolumeMounts:
+  # - name: etcfluentd-template
+  #   mountPath: /etc/fluent/template
+  - mountPath: /etc/fluent/certs
+    name: fluent-tls
+    readOnly: true
+
+
+# Environment variables used by Fluent Config files
+env: 
+  - name: FLUENT_AGGREGATOR_HOST
+    value: fluent-aggregator-fluent-bit
+  - name: FLUENT_AGGREGATOR_PORT
+    value: "24224"
+  - name: FLUENT_AGGREGATOR_SHARED_KEY
+    valueFrom:
+      secretKeyRef:
+        name: fluent-env-secrets
+        key: fluent-shared-key
+  # Elastic Search username + password
+  - name: FLUENT_ELASTICSEARCH_USER
+    valueFrom:
+      secretKeyRef:
+        name: fluent-secrets
+        key: es-username
+  - name: FLUENT_ELASTICSEARCH_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: fluent-secrets
+        key: es-password
+  - name: FLUENT_SELFHOSTNAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
+
+
+
+## Fluentd list of plugins to install
+##
+plugins: []
+# - fluent-plugin-out-http
+
+# Enable prometheus Service Monitor
+metrics:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: {}
+  prometheusRule:
+    enabled: false
+
+dashboards:
+  enabled: "true"
+  labels:
+    grafana_dashboard: '"1"'
+
+# helm upgrade --install fluent-bit-aggregator fluent/fluent-bit-aggregator --namespace fluent -f fluent-bit-aggregator-values.yaml --history-max=3
+
+# helm uninstall fluent-bit-aggregator -n fluent

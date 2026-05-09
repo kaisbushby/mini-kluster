@@ -1,0 +1,214 @@
+# Deploy fluent-bit as daemonSet. One POD per node
+kind: DaemonSet
+# Host directories containing Host and POD logs files
+# Mounted into Fluent-bit DaemonSet POD
+hostVolumes:
+  # Mount file containing host and POD logs
+  # In K3S, PODS logs are located in /var/log/pods
+  # Host OS logs located in /var/logs
+  - name: logs
+    hostPath:
+      path: /var/log
+      type: Directory
+    mountPath: /var/log
+  # Mount /etc/machine-id identifying node
+  - name: machine-id
+    hostPath:
+      path: /etc/machine-id
+      type: File
+    mountPath: /etc/machine-id
+  
+storage:
+  enabled: true
+
+securityContext:
+  privileged: true
+  allowPrivilegeEscalation: true
+  readOnlyRootFilesystem: true
+  runAsNonRoot: false
+  runAsUser: 0
+  runAsGroup: 0
+  capabilities:
+    drop:
+      - ALL
+    add:
+      - CAP_FOWNER
+  
+# Environment variables used by Fluent Config files
+env: 
+  - name: FLUENT_AGGREGATOR_HOST
+    value: fluent-bit-aggregator.fluent.svc.cluster.local
+  - name: FLUENT_AGGREGATOR_PORT
+    value: "24224"
+  - name: FLUENT_AGGREGATOR_SHARED_KEY
+    valueFrom:
+      secretKeyRef:
+        name: fluent-env-secrets
+        key: fluent-shared-key
+  - name: FLUENT_SELFHOSTNAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
+
+# Define configuration file in external configMap using YAML syntax
+# Remove classic default configuration
+config: {}
+config: 
+  # Service configuration
+  service:
+    daemon: false
+    flush: 1
+    # Log Level
+    log_level: warn
+    # Enable HTTP Server
+    http_server: true
+    http_listen: 0.0.0.0
+    http_port: 2020
+    # Enable Health Check
+    health_check: true
+    # Enable Hot Reload
+    hot_reload: true
+    # Enabling filesystem buffering
+    storage.sync: full
+    storage.path: /var/log/fluentbit/storage
+    storage.checksum: true
+    storage.backlog.mem_limit: 20M
+    storage.metrics: true
+    # Remove IO file count limit
+    limitnofile: 65536
+  pipeline:
+    inputs:
+        # kubernetes logs
+      - name: tail
+        alias: input.kube
+        path: /var/log/containers/*.log
+        # Add filename key to the record
+        path_key: filename
+        # Enable buil-in multi-line cri parser
+        multiline.parser: cri
+        # Set kube. prefix in the predefined tag (filepath)
+        tag: kube.*
+        # Enable tail state feature
+        db: ${STORAGE_PATH}/flb_kube.db
+        storage.type: filesystem
+        skip_long_lines: true
+        ignore_older: 24h
+
+        # K3s and OS level logs
+      - name: tail
+        alias: input.host
+        path: /var/log/auth.log, /var/log/syslog
+        path_key: filename
+        parser: syslog-rfc5424
+        tag: host.*
+        db: ${STORAGE_PATH}/flb_host.db
+        storage.type: filesystem
+        ignore_older: 24h
+        
+    filters:
+    # Prevents infinite loop with stdout for fluent-bit collector and aggregator
+    - name: grep
+      match: "*"
+      exclude: log /kube.var.log.containers.fluent-bit/
+
+    - name: multiline
+      match: '*'
+      multiline.key_content: log
+      multiline.parser: go, java, python
+
+    - name: kubernetes
+      match: kube.*
+      buffer_size: 512k
+      kube_tag_prefix: kube.var.log.containers.
+      merge_log: false
+      k8s-logging.parser: true
+      k8s-logging.exclude: true
+      labels: true
+      annotations: false
+
+    - name: lua
+      match: kube.*
+      script: /fluent-bit/scripts/parse_kubernetes_metadata.lua
+      call: extract_app_name
+
+    - name: nest
+      match: kube.*
+      operation: lift
+      nested_under: kubernetes
+      add_prefix: kubernetes_
+    - name: modify
+      match: kube.*
+      Rename: 
+        - kubernetes_pod_name pod
+        - kubernetes_namespace_name namespace
+        - kubernetes_container_name container
+        - kubernetes_host host
+      
+    - name: modify
+      match: kube.*
+      Remove:
+        - _p
+      Remove_wildcard:
+        - kubernetes_
+    outputs:
+      - name: forward
+        alias: output.aggregator
+        match: '*'
+        host: ${FLUENT_AGGREGATOR_HOST}
+        port: ${FLUENT_AGGREGATOR_PORT}
+
+        # self_hostname: ${FLUENT_SELFHOSTNAME}
+        # shared_key: ${FLUENT_AGGREGATOR_SHARED_KEY}
+        # tls: true
+        # tls.verify: false
+      # - name: stdout
+      #   match: "*"
+
+# Lua Scripts. ConfigMap luascripts mounted as /fluent-bit/scripts
+luaScripts: 
+  parse_kubernetes_metadata.lua: |
+    function extract_app_name(tag, timestamp, record)
+      if record["kubernetes"] ~= nil then
+        if record["kubernetes"]["labels"]["app.kubernetes.io/name"] ~= nil then
+            record["app"] = record["kubernetes"]["labels"]["app.kubernetes.io/name"]
+        end
+        if record["kubernetes"]["labels"]["app"] ~= nil then
+            record["app"] = record["kubernetes"]["labels"]["app"]
+        end
+      end
+      return 1, timestamp, record
+    end
+
+ # Change args to load yaml config file instead default fluent-bit.conf
+command:
+  - /fluent-bit/bin/fluent-bit
+
+# Enable fluentbit installation on control-plane nodes
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+
+# Enable hot-reload
+# jimmidyson/configmap-reload is deployed as side-car
+# By default it watches for changes in /fluent-bit/etc/conf/ (fluent-conf) and /fluent-bit/scripts (luascripts)
+# If any change is detected reload endpoint is ivoked: 
+# http://localhost:2020/api/v2/reload
+hotReload:
+  enabled: true
+
+# Enable Prometheus operator service monitor
+serviceMonitor:
+  enabled: true
+
+# Enable Grafana dashboard
+dashboards:
+  enabled: true
+  labelKey: grafana_dashboard
+  labelValue: 1
+  annotations:
+    grafana_folder: "Logging"
+
+# helm upgrade --install fluent-bit-collector fluent/fluent-bit-collector --namespace fluent -f fluent-bit-collector-values.yaml --history-max=3
+
+# helm uninstall fluent-bit-collector -n fluent
