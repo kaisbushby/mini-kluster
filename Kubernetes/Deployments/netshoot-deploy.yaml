@@ -16,8 +16,8 @@ spec:
         memory: "1Gi"
         cpu: "1"
       requests:
-        memory: 256Mi
-        cpu: 250m
+        memory: 128Mi
+        cpu: 100m
 
 
 #kubectl exec -it netshoot-pod -c netshoot -- /bin/bash
