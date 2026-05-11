@@ -1,13 +1,3 @@
-apiVersion: ceph.rook.io/v1
-kind: CephBlockPool
-metadata:
-  name: replicapool
-  namespace: rook-ceph
-spec:
-  failureDomain: host
-  replicated:
-    size: 3
----
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -35,7 +25,8 @@ parameters:
     # unmapOptions: force
 
     # RBD image format. Defaults to "2".
-    imageFormat: "2"
+    # KRBG image format uses "63" for all it's image features (requires 63 bits)
+    imageFormat: "63"
 
     # RBD image features
     # Available for imageFormat: "2". Older releases of CSI RBD
@@ -46,9 +37,9 @@ parameters:
     # correspond to Ceph's OR'd bitfield value of "63". Here we use
     # a symbolic, comma-separated format:
     # For 5.4 or later kernels:
-    #imageFeatures: layering,fast-diff,object-map,deep-flatten,exclusive-lock
+    imageFeatures: layering,fast-diff,object-map,deep-flatten,exclusive-lock
     # For 5.3 or earlier kernels:
-    imageFeatures: layering
+    # imageFeatures: layering
 
     # The secrets contain Ceph admin credentials.
     csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner

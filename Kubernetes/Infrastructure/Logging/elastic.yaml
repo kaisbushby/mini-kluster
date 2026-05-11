@@ -27,9 +27,11 @@ spec:
     roles:
     - secretName: es-fluentd-roles-secret
     - secretName: es-prometheus-roles-secret
+    - secretName: es-telemetry-roles-secret
     fileRealm:
     - secretName: es-fluentd-user-file-realm
     - secretName: es-prometheus-user-file-realm
+    - secretName: es-telemetry-user-file-realm
   http:
     tls: # Disabling TLS automatic configuration.
       selfSignedCertificate:
@@ -103,9 +105,22 @@ stringData:
       indices:
       - names: [ '*' ]
         privileges: [ 'monitor', 'view_index_metadata' ]
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: es-telemetry-roles-secret
+  namespace: elastic
+stringData:
+  roles.yml: |-
+    telemetry_role:
+      cluster: [ 'monitor' ]
+      indices:
+      - names: [ 'logs-*.otel-*', 'metrics-*.otel-*', 'traces-*.otel-*' ]
+        privileges: [ "auto_configure", "create_doc", "create_index" ]
 
 ---
-# Fluentd + Prometheus Users
+# Fluentd + Prometheus + OpenTelemetry Users
 ---
 apiVersion: v1
 kind: Secret
@@ -128,6 +143,18 @@ data:
   username: "cHJvbWV0aGV1cw==" # prometheus
   password: "QTc1Ykw4OVNVTGdC" # A75bL89SULgB
   roles: "cHJvbWV0aGV1c19yb2xl" # prometheus_role
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: es-telemetry-user-file-realm
+  namespace: elastic
+type: kubernetes.io/basic-auth
+data:
+  username: "dGVsZW1ldHJ5Cg==" # telemetry
+  password: "NjNyNVFzRDV3RFcxCg==" # 63r5QsD5wDW1
+  roles: "dGVsZW1ldHJ5X3JvbGUK" # telemetry_role
+
 
 
 # Username is "elastic"

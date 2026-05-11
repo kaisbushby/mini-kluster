@@ -82,7 +82,10 @@ config:
         trace_error: on
       
       - name: loki
-        host: loki-gateway.loki.svc.cluster.local
+        match: "*"
+        host: loki-write.loki.svc.cluster.local
+        labels: job=fluentbit
+        label_keys: $sub['stream']
       # - name: stdout
       #   match: "*"
 

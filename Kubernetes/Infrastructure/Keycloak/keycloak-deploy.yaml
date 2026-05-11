@@ -51,6 +51,9 @@ spec:
       # Enable user metrics
     - name: event-metrics-user-enabled
       value: 'true'
+  tracing:
+    enabled: true
+    endpoint: http://otel-collector.otel.svc.cluster.local:4317
 
 ---
 

@@ -1,0 +1,16 @@
+
+kind: ServiceMonitor
+metadata:
+  name: tempo
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tempo
+  namespaceSelector:
+    matchNames:
+      - tempo
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+      interval: 30s

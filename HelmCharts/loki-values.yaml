@@ -1,7 +1,7 @@
 deploymentMode: SimpleScalable
 
 loki:
-  auth_enabled: true
+  auth_enabled: false
 
   compactor:
     compaction_interval: 10m
@@ -80,13 +80,8 @@ minio:
   enabled: false
 
 # Disable self-monitoring
-monitoring:
-  selfMonitoring:
-    enabled: false
-    grafanaAgent:
-      installOperator: false
-    lokiCanary:
-        enabled: false
+lokiCanary:
+  enabled: false
 
 # Disable helm-test
 test:

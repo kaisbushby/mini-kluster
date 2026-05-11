@@ -1,0 +1,182 @@
+# https://oneuptime.com/blog/post/2026-01-17-helm-grafana-tempo-tracing-deployment/view
+
+fullnameOverride: 'tempo'
+streamOverHTTPEnabled: true
+
+# Enable trace ingestion
+traces:
+  otlp:
+    grpc:
+      enabled: true
+    http:
+      enabled: true
+  zipkin:
+    enabled: true
+  jaeger:
+    thriftCompact:
+      enabled: true
+    thriftHttp:
+      enabled: true
+  opencensus:
+    enabled: true
+
+
+# Storage configuration
+storage:
+  trace:
+    backend: s3
+    s3:
+      bucket: k3s-tempo
+      endpoint: rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
+      region: ceph-objectstore
+      access_key: F7FED84U1CU1ISSXTVOI
+      secret_key: RvoxNzd3h4hDhkEQR9RjQ9hRGvzArANtN1EMPtoq
+      insecure: true
+
+# Distributor
+distributor:
+  replicas: 1
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+  config:
+    log_received_spans:
+      enabled: true
+      
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+# Ingester
+ingester:
+  replicas: 2
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+      
+  # Unfortunately, I don't have spare SSD's!
+  # persistence:
+  #   enabled: true
+  #   size: 50Gi
+  #   storageClassName: fast-ssd
+    
+  config:
+    replication_factor: 2
+    
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+# Querier
+querier:
+  replicas: 1
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+      
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+# Query Frontend
+queryFrontend:
+  replicas: 1
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 70
+      
+  query:
+    search:
+      max_duration: 0s  # Disable max duration
+      default_result_limit: 20
+
+# Configure compactor
+compactor:
+  replicas: 1
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+      
+  config:
+    compaction:
+      block_retention: 72h  # 7 days
+
+
+# Enable metrics-generator so TraceQL metrics queries such as rate() work
+metricsGenerator:
+  enabled: true
+  replicas: 1
+
+  config:
+    processor:
+      local_blocks:
+        filter_server_spans: false
+        flush_to_storage: true
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  
+
+
+# Memcached for caching
+memcached:
+  enabled: true
+  replicas: 3
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+
+minio:
+  enabled: false
+
+# helm upgrade --install tempo grafana-community/tempo-distributed --namespace tempo -f tempo-values.yaml --history-max=3
+# helm uninstall tempo -n tempo 

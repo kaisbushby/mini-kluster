@@ -47,6 +47,9 @@ redis-ha:
   enabled: true
   redisPassword: "notVerySecure"
   replicas: 2
+
+  persistentVolume:
+    enabled: false
   # standalone redis. No cluster
   architecture: standalone
 
@@ -69,3 +72,4 @@ ingress:
 
 
 # helm upgrade --install oauth2-proxy oauth2-proxy/oauth2-proxy -f oauth2-proxy-values.yaml --namespace oauth2-proxy --history-max=3
+# helm uninstall oauth2-proxy -n oauth2-proxy

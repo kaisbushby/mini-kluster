@@ -1,7 +1,132 @@
+# https://oneuptime.com/blog/post/2026-01-17-helm-opentelemetry-collector-deployment/view
+image:
+  repository: otel/opentelemetry-collector-contrib
+
+fullnameOverride: otel-collector
+
+mode: deployment
+replicaCount: 2
+
+presets:
+  kubernetesAttributes:
+    enabled: true
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+service:
+  type: ClusterIP
+
+ports:
+  metrics:
+    enabled: true
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+
+extraEnvs:
+  - name: ELASTIC_USER
+    value: telemetry
+    # valueFrom:
+    #   secretKeyRef:
+    #     name: otel-elasticsearch-exporter-secret
+    #     key: es-username
+  - name: ELASTIC_PASSWORD
+    value: 63r5QsD5wDW1
+    # valueFrom:
+    #   secretKeyRef:
+    #     name: otel-elasticsearch-exporter-secret
+    #     key: es-password
+
+config:
+  receivers:
+    otlp:
+      protocols:
+        http:
+          endpoint: 0.0.0.0:4318
+          cors:
+            allowed_origins:
+              - "http://*.homelab.kbushby.com"
+              - "https://*.homelab.kbushby.com"
+  extensions:
+    basicauth:
+      client_auth:
+        username: "${env:ELASTIC_USER}"
+        password: "${env:ELASTIC_PASSWORD}"
+  exporters:
+    otlp:
+      endpoint: tempo-distributor-discovery.tempo.svc.cluster.local:4317
+      tls:
+        insecure: true
+    otlp_http/prometheus:
+      endpoint: http://kube-prometheus-stack-prometheus.kube-prom-stack.svc.cluster.local:9090/api/v1/otlp
+      tls:
+        insecure: true
+    otlp_http/loki:
+      endpoint: http://loki-gateway.loki/otlp
+    elasticsearch:
+      endpoint: http://efk-es-http.elastic.svc.cluster.local:9200
+      auth:
+        authenticator: basicauth
+  processors:
+    resource:
+      attributes:
+        - key: service.instance.id
+          from_attribute: k8s.pod.uid
+          action: insert
+    transform/loki:
+      log_statements:
+        - context: log
+          statements:
+            - set(resource.attributes["exporter"], "OTLP")
+            - set(resource.attributes["k8s.namespace.name"], log.attributes["k8s.namespace.name"])
+            - delete_key(log.attributes, "k8s.namespace.name")
+  connectors:
+    span_metrics: {}
+  service:
+    extensions:
+      - health_check
+      - basicauth
+    pipelines:
+      traces:
+        processors: [memory_limiter, resource, batch]
+        exporters: [span_metrics, otlp]
+      metrics:
+        receivers: [otlp, span_metrics]
+        processors: [memory_limiter, resource, batch]
+        exporters: [otlp_http/prometheus]
+      logs/elasticsearch:
+        receivers: [otlp]
+        processors: [memory_limiter, resource, batch]
+        exporters: [elasticsearch]
+      logs/loki:
+        receivers: [otlp]
+        processors: [memory_limiter, resource, batch, transform/loki]
+        exporters: [otlp_http/loki]
+    telemetry:
+      metrics:
+        level: detailed
+        readers:
+          - periodic:
+              interval: 10000
+              timeout: 5000
+              exporter:
+                otlp:
+                  protocol: http/protobuf
+                  endpoint: http://otel-collector:4318
 
 
 
-
-
-# helm upgrade --install opentelemetry-collector open-telemetry/opentelemetry-collector --namespace optel -f open-telemetry-values.yaml --history-max=3
-# helm uninstall opentelemetry-collector -n optel
+# helm upgrade --install opentelemetry-collector open-telemetry/opentelemetry-collector --namespace otel -f open-telemetry-values.yaml --history-max=3
+# helm uninstall opentelemetry-collector -n otel
