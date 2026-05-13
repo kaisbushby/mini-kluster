@@ -18,11 +18,31 @@ mountVarLogDirectory: false
 mountDockerContainersDirectory: false
 
 # Environment variables used by Fluent Config files
-# envFrom:
-#   - configMapRef:
-#       name: fluentd-env-configmap
-#   - secretRef:
-#       name: fluentd-env-secret
+env: 
+  - name: FLUENT_AGGREGATOR_HOST
+    value: fluent-aggregator-fluent-bit
+  - name: FLUENT_AGGREGATOR_PORT
+    value: "24224"
+  - name: FLUENT_AGGREGATOR_SHARED_KEY
+    valueFrom:
+      secretKeyRef:
+        name: fluent-env-secrets
+        key: fluent-shared-key
+  # Elastic Search username + password
+  - name: FLUENT_ELASTICSEARCH_USER
+    valueFrom:
+      secretKeyRef:
+        name: fluent-secrets
+        key: es-username
+  - name: FLUENT_ELASTICSEARCH_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: fluent-secrets
+        key: es-password
+  - name: FLUENT_SELFHOSTNAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
 
 config:
   service:
@@ -128,40 +148,6 @@ extraVolumeMounts:
     name: fluent-tls
     readOnly: true
 
-
-# Environment variables used by Fluent Config files
-env: 
-  - name: FLUENT_AGGREGATOR_HOST
-    value: fluent-aggregator-fluent-bit
-  - name: FLUENT_AGGREGATOR_PORT
-    value: "24224"
-  - name: FLUENT_AGGREGATOR_SHARED_KEY
-    valueFrom:
-      secretKeyRef:
-        name: fluent-env-secrets
-        key: fluent-shared-key
-  # Elastic Search username + password
-  - name: FLUENT_ELASTICSEARCH_USER
-    valueFrom:
-      secretKeyRef:
-        name: fluent-secrets
-        key: es-username
-  - name: FLUENT_ELASTICSEARCH_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: fluent-secrets
-        key: es-password
-  - name: FLUENT_SELFHOSTNAME
-    valueFrom:
-      fieldRef:
-        fieldPath: spec.nodeName
-
-
-
-## Fluentd list of plugins to install
-##
-plugins: []
-# - fluent-plugin-out-http
 
 # Enable prometheus Service Monitor
 metrics:
