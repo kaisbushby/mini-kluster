@@ -16,8 +16,10 @@ controller:
   config:
     # Open Telemetry
     enable-opentelemetry: "true"
-    otlp-collector-host: tempo-distributor.tempo.svc.cluster.local
-    otlp-service-name: nginx-internal
+    # otlp-collector-host: tempo-distributor.tempo.svc.cluster.local
+    otlp-collector-host: otel-collector.otel.svc.cluster.local
+    otel-service-name: nginx-internal
+    opentelemetry-operation-name: "HTTP $request_method $service_name $uri"
     # Print access log to file instead of stdout
     # Separating acces logs from the rest
     access-log-path: "/data/access.log"
@@ -51,4 +53,4 @@ controller:
     annotations:
       io.cilium/lb-ipam-pool: nginx-ingress-pool
 
-#helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx -f nginx-ingress-values.yaml --namespace nginx --history-max=3
+# helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx -f nginx-ingress-values.yaml --namespace nginx --history-max=3

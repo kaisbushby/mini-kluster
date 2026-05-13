@@ -30,17 +30,17 @@ servers:
   # Serves a /metrics endpoint on :9153, required for serviceMonitor
   - name: prometheus
     parameters: 0.0.0.0:9153
-  - name: cache
-    parameters: 30
-  - name: loop
-  - name: reload
-  - name: loadbalance
   - name: import
     parameters: /etc/coredns/custom/*.override
   - name: forward
     parameters: homelab.kbushby.com 192.168.20.2
   - name: forward
     parameters: . /etc/resolv.conf
+  - name: cache
+    parameters: 30
+  - name: loop
+  - name: reload
+  - name: loadbalance
 
 # When using preexisting k3s CoreDNS instance add the following to the exising
 # ServiceAccount, ConfigMap, Service, Deployment

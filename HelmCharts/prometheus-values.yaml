@@ -251,7 +251,7 @@ grafana:
       jsonData:
         httpMethod: GET
         tracesToLogs:
-          datasourceUid: loki
+          datasourceUid: Loki
           filterByTraceID: true
           filterBySpanID: true
           mapTagNamesEnabled: true
@@ -265,9 +265,9 @@ grafana:
           tags:
             - key: service.name
               value: service
-          queries:
-            - name: 'Request rate'
-              query: 'sum(rate(traces_spanmetrics_latency_count{$$__tags}[1m]))'
+          # queries:
+          #   - name: 'Request rate'
+          #     query: 'sum(rate(traces_spanmetrics_latency_count{$$__tags}[1m]))'
         serviceMap:
           datasourceUid: prometheus
         nodeGraph:
@@ -275,7 +275,7 @@ grafana:
         search:
           hide: false
         lokiSearch:
-          datasourceUid: loki
+          datasourceUid: Loki
 
 # Kubernetes Monitoring
 ## Kubelet

@@ -13,7 +13,7 @@ presets:
 
 resources:
   requests:
-    cpu: 200m
+    cpu: 100m
     memory: 256Mi
   limits:
     cpu: 1000m
@@ -55,17 +55,13 @@ config:
       protocols:
         http:
           endpoint: 0.0.0.0:4318
-          cors:
-            allowed_origins:
-              - "http://*.homelab.kbushby.com"
-              - "https://*.homelab.kbushby.com"
   extensions:
     basicauth:
       client_auth:
         username: "${env:ELASTIC_USER}"
         password: "${env:ELASTIC_PASSWORD}"
   exporters:
-    otlp:
+    otlp/tempo:
       endpoint: tempo-distributor-discovery.tempo.svc.cluster.local:4317
       tls:
         insecure: true
@@ -101,7 +97,7 @@ config:
     pipelines:
       traces:
         processors: [memory_limiter, resource, batch]
-        exporters: [span_metrics, otlp]
+        exporters: [span_metrics, otlp/tempo]
       metrics:
         receivers: [otlp, span_metrics]
         processors: [memory_limiter, resource, batch]
@@ -124,7 +120,7 @@ config:
               exporter:
                 otlp:
                   protocol: http/protobuf
-                  endpoint: http://otel-collector:4318
+                  endpoint: http://otel-collector.otel.svc.cluster.local:4318
 
 
 

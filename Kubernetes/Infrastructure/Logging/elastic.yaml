@@ -117,7 +117,7 @@ stringData:
       cluster: [ 'monitor' ]
       indices:
       - names: [ 'logs-*.otel-*', 'metrics-*.otel-*', 'traces-*.otel-*' ]
-        privileges: [ "auto_configure", "create_doc", "create_index" ]
+        privileges: [ 'auto_configure', 'create_doc', 'create_index' ]
 
 ---
 # Fluentd + Prometheus + OpenTelemetry Users
@@ -151,12 +151,13 @@ metadata:
   namespace: elastic
 type: kubernetes.io/basic-auth
 data:
-  username: "dGVsZW1ldHJ5Cg==" # telemetry
-  password: "NjNyNVFzRDV3RFcxCg==" # 63r5QsD5wDW1
-  roles: "dGVsZW1ldHJ5X3JvbGUK" # telemetry_role
+  username: "dGVsZW1ldHJ5" # telemetry
+  password: "NjNyNVFzRDV3RFcx" # 63r5QsD5wDW1
+  roles: "dGVsZW1ldHJ5X3JvbGU=" # telemetry_role
 
+# echo -n "TEXT" | base64
 
 
 # Username is "elastic"
 # kubectl get secret -n elastic efk-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
-# password is: "3hDeA88qSynLgbB9DQHBRuEX"
+# password is: "fIA9oqfvPKI55g2PnpLrNS5H"

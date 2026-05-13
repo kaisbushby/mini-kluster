@@ -38,6 +38,18 @@ spec:
   # External exposure is configured separately with a Gateway API HTTPRoute.
   ingress:
     enabled: false
+  features:
+    enabled:
+      - opentelemetry-logs
+      - opentelemetry-metrics
+  tracing:
+    enabled: true
+  telemetry:
+    serviceName: keycloak
+    protocol: http/protobuf
+    # Documentation says http:// prefix is required
+    endpoint: http://otel-collector.otel.svc.cluster.local:4318
+    
   additionalOptions: # Add config from here https://www.keycloak.org/server/all-config
     # Enable metrics endpoint
     - name: metrics-enabled
@@ -51,9 +63,12 @@ spec:
       # Enable user metrics
     - name: event-metrics-user-enabled
       value: 'true'
-  tracing:
-    enabled: true
-    endpoint: http://otel-collector.otel.svc.cluster.local:4317
+      # Enable telemetry logs
+    - name: telemetry-logs-enabled
+      value: "true"
+      # Enable telemetry metrics
+    - name: telemetry-metrics-enabled
+      value: "true"
 
 ---
 
@@ -65,6 +80,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: cloudflare-ca-issuer
     cert-manager.io/common-name: iam.homelab.kbushby.com
+    external-dns.alpha.kubernetes.io/hostname: iam.homelab.kbushby.com
 spec:
   ingressClassName: nginx
   rules:

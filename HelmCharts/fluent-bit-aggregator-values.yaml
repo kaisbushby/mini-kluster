@@ -48,13 +48,12 @@ config:
       - name: forward
         listen: 0.0.0.0
         port: ${FLUENT_AGGREGATOR_PORT}
-        # self_hostname: ${FLUENT_SELFHOSTNAME}
-      
+        self_hostname: ${FLUENT_SELFHOSTNAME}
         # Optional: Add security with Shared_Key or TLS
-        # shared_key: ${FLUENT_AGGREGATOR_SHARED_KEY}
-        # tls: on
-        # tls.crt_file: /etc/fluent/certs/tls.crt
-        # tls.key_file: /etc/fluent/certs/tls.key
+        shared_key: ${FLUENT_AGGREGATOR_SHARED_KEY}
+        tls: on
+        tls.crt_file: /etc/fluent/certs/tls.crt
+        tls.key_file: /etc/fluent/certs/tls.key
 
     filters:
       - name: modify
@@ -84,7 +83,7 @@ config:
       - name: loki
         match: "*"
         host: loki-write.loki.svc.cluster.local
-        labels: job=fluentbit
+        labels: job=fluent-bit
         label_keys: $sub['stream']
       # - name: stdout
       #   match: "*"

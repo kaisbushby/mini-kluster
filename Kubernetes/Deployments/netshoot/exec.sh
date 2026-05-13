@@ -1,0 +1,1 @@
+kubectl exec -it netshoot-pod netshoot -- bash

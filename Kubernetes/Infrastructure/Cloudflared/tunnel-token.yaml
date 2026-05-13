@@ -1,0 +1,17 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cloudflared-tunnel-token
+  namespace: cloudflare
+spec:
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    # name of the generated secret
+    name: cloudflared-tunnel-token-secret
+  data:
+  - secretKey: token # Name of the element in the generated secret
+    remoteRef:
+      key: cloudflare  # The path of the secret, relative from the secrets path
+      property: cloudflared-tunnel-token  # name of the attribute to access
