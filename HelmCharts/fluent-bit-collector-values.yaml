@@ -156,10 +156,10 @@ config:
         match: '*'
         host: ${FLUENT_AGGREGATOR_HOST}
         port: ${FLUENT_AGGREGATOR_PORT}
-        self_hostname: ${FLUENT_SELFHOSTNAME}
+        # self_hostname: ${FLUENT_SELFHOSTNAME}
         shared_key: ${FLUENT_AGGREGATOR_SHARED_KEY}
-        tls: true
-        tls.verify: false
+        # tls: true
+        # tls.verify: false
 
       # - name: stdout
       #   match: "*"

@@ -68,12 +68,12 @@ config:
       - name: forward
         listen: 0.0.0.0
         port: ${FLUENT_AGGREGATOR_PORT}
-        self_hostname: ${FLUENT_SELFHOSTNAME}
+        # self_hostname: ${FLUENT_SELFHOSTNAME}
         # Optional: Add security with Shared_Key or TLS
         shared_key: ${FLUENT_AGGREGATOR_SHARED_KEY}
-        tls: on
-        tls.crt_file: /etc/fluent/certs/tls.crt
-        tls.key_file: /etc/fluent/certs/tls.key
+        # tls: on
+        # tls.crt_file: /etc/fluent/certs/tls.crt
+        # tls.key_file: /etc/fluent/certs/tls.key
 
     filters:
       - name: modify
@@ -116,7 +116,7 @@ luaScripts:
       if record["index_name"] == nil then
         if record["app"] ~= nil then
           record["index_name"] = "fluentbit-" .. record["app"]
-        else
+        elseif record["namespace"] ~= nil then
           record["index_name"] = "fluentbit-" .. record["namespace"]
         end
       end
