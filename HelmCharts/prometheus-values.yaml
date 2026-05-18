@@ -133,7 +133,7 @@ prometheus:
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: 20Gi
+              storage: 24Gi
     ##
     ## Extra arguments
     extraArgs:
@@ -186,12 +186,30 @@ grafana:
   grafana.ini:
     server:
       domain: grafana.homelab.kbushby.com
-      root_url: "%(protocol)s://%(domain)s:%(http_port)s/"
+      # root_url: "%(protocol)s://%(domain)s:%(http_port)s/"
+      root_url: "https://grafana.homelab.kbushby.com/"
+
       # When serve_from_subpath is enabled, internal requests from e.g. prometheus get redirected to the defined root_url.
       # This is causing prometheus to not be able to scrape metrics because it accesses grafana via the kubernetes service name and is then redirected to the public url
       # To make Prometheus work, disable server_from_sub_path and add rewrite rule in NGINX proxy
       # ref: https://github.com/grafana/grafana/issues/72577#issuecomment-1682277779
       serve_from_sub_path: false
+
+    # auth.generic_oauth:
+    #   enabled: true
+    #   name: Keycloak-OIDC
+    #   allow_sign_up: false
+    #   client_id: grafana-oidc
+    #   client_secret: # secret
+    #   scopes: "openid email profile offline_access roles"
+    #   email_attribute_path: email
+    #   login_attribute_path: username
+    #   name_attribute_path: full_name
+    #   auth_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/auth
+    #   token_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/token
+    #   api_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/userinfo
+    #   logout_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/logout
+    #   role_attribute_path: contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer'
   ##
   ## Provisioning sidecars
   ##
