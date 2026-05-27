@@ -16,7 +16,7 @@ ingress:
 #  environment: production
 #  email: "kaisbushby@gmail.com"
 #  ingress:
-#    class: "cilium"
+#    class: "nginx"
 
 bootstrapPassword: "admin"
 

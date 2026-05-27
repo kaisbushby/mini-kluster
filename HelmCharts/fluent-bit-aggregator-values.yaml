@@ -100,13 +100,12 @@ config:
         suppress_type_name: on
         trace_error: on
       
+      # Sending logs to Loki for the Grafana Dashboard
       - name: loki
         match: "*"
         host: loki-write.loki.svc.cluster.local
         labels: job=fluent-bit
         label_keys: $sub['stream']
-      # - name: stdout
-      #   match: "*"
 
 luaScripts:
   # Creates ElasticSearch index name based on app name

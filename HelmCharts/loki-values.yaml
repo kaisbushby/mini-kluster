@@ -1,3 +1,7 @@
+# Q: What is Loki?
+# A: Loki is a log aggregation system, which is also capable of storing logs into S3/PVC
+# Currently used to store logs for the Grafana Dashboard
+
 deploymentMode: SimpleScalable
 
 loki:
@@ -86,8 +90,6 @@ lokiCanary:
 # Disable helm-test
 test:
   enabled: false
-
-
 
 # helm upgrade --install loki grafana-community/loki --namespace loki -f loki-values.yaml --history-max=3
 # helm uninstall loki -n loki

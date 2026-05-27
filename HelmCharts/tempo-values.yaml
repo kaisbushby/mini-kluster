@@ -1,5 +1,9 @@
 # https://oneuptime.com/blog/post/2026-01-17-helm-grafana-tempo-tracing-deployment/view
 
+# Q: What is Tempo
+# A: Tempo is a service that ingests OTLP traces from other services
+# The ingested traces can be viewed in Grafana
+
 fullnameOverride: 'tempo'
 streamOverHTTPEnabled: true
 
