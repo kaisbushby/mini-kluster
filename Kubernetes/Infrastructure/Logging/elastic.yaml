@@ -160,4 +160,3 @@ data:
 
 # Username is "elastic"
 # kubectl get secret -n elastic efk-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
-# password is: "fIA9oqfvPKI55g2PnpLrNS5H"

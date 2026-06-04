@@ -1,0 +1,12 @@
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: replicapool
+  namespace: rook-ceph
+spec:
+  failureDomain: host
+  replicated:
+    size: 3
+
+# TODO: Consider migrating to  Erasure Coded RBD Pool (RAID 6) when adding new nodes
+# https://rook.io/docs/rook/v1.20/CRDs/Block-Storage/ceph-block-pool-crd/

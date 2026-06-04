@@ -6,37 +6,37 @@ metadata:
   namespace: kube-system
 spec:
   blocks:
-    # 	192.168.24.1 - 192.168.25.254
-    #   512 Hosts
-    - cidr: "192.168.24.0/23"
+    # 	192.168.24.1 - 192.168.24.254
+    #   255 Hosts
+    - cidr: "192.168.24.0/24"
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumLoadBalancerIPPool
 metadata:
-  name: "staging-lb-pool"
+  name: "dev-lb-pool"
   namespace: kube-system
 spec:
   blocks:
-    #   192.168.26.1 - 192.168.27.254
-    #   512 Hosts
-    - cidr: "192.168.26.0/23"
-  serviceSelector:
-    matchLabels:
-      environment: "staging"
+    #   192.168.25.1 - 192.168.25.254
+    #   255 Hosts
+    - cidr: "192.168.25.0/24"
+  # serviceSelector:
+  #   matchLabels:
+  #     environment: "development"
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumLoadBalancerIPPool
 metadata:
-  name: "production-lb-pool"
+  name: "prod-lb-pool"
   namespace: kube-system
 spec:
   blocks:
-    #   192.168.28.1 - 192.168.29.254
-    #   512 Hosts
-    - cidr: "192.168.28.0/23"
-  serviceSelector:
-    matchLabels:
-      environment: "production"
+    #   192.168.26.1 - 192.168.26.254
+    #   255 Hosts
+    - cidr: "192.168.26.0/24"
+  # serviceSelector:
+  #   matchLabels:
+  #     environment: "production"
 ---
 apiVersion: "cilium.io/v2alpha1"
 kind: CiliumL2AnnouncementPolicy

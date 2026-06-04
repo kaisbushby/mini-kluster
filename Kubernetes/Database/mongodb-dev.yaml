@@ -12,7 +12,7 @@ stringData:
 apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:
-  name: mongodb
+  name: mongodb-dev
   namespace: mongodb
 spec:
   members: 3

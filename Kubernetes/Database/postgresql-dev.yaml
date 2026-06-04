@@ -1,7 +1,7 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: postgresql-testdb
+  name: postgresql-dev-db
   namespace: databases
 spec:
   instances: 1

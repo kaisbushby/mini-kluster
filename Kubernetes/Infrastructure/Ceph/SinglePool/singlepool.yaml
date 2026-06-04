@@ -1,9 +1,11 @@
 apiVersion: ceph.rook.io/v1
 kind: CephBlockPool
 metadata:
-  name: replicapool
+  name: singlepool
   namespace: rook-ceph
 spec:
   failureDomain: host
   replicated:
-    size: 3
+    size: 1
+
+# https://rook.io/docs/rook/v1.20/CRDs/Block-Storage/ceph-block-pool-crd/

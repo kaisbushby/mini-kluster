@@ -1,0 +1,97 @@
+
+controller:
+  # Pod disruption budget ensures availability during updates
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+
+  # Install recommended plugins during setup
+  installPlugins:
+    - kubernetes:latest
+    - workflow-aggregator:latest
+    - git:latest
+    - configuration-as-code:latest
+    - job-dsl:latest
+    - blueocean:latest
+    - credentials-binding:latest
+  
+  additionalPlugins:
+    - github:latest
+    - maven-plugin:latest
+    - pipeline-graph-view:latest
+    - pipeline-model-definition:latest
+    - pipeline-stage-view:latest
+    - pipeline-utility-steps:latest
+    - oic-auth:latest
+    - cloudbees-folder:latest
+
+  # Enable Jenkins Configuration as Code
+  JCasC:
+    enabled: true
+    defaultConfig: true
+
+  # -- Resource allocation (Requests and Limits)
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "256Mi"
+    limits:
+      cpu: "2000m"
+      memory: "4096Mi"
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+    # ExternalDNS entry
+      external-dns.alpha.kubernetes.io/hostname: jenkins.homelab.kbushby.com
+      # Enable cert-manager to create automatically the SSL certificate and store in Secret
+      cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+      cert-manager.io/common-name: jenkins.homelab.kbushby.com
+    path: /
+    pathType: Prefix
+    hostName: jenkins.homelab.kbushby.com
+    tls:
+      - hosts:
+        - jenkins.homelab.kbushby.com
+        secretName: jenkins-tls
+
+# Persistent storage for Jenkins home directory
+persistence:
+  enabled: true
+  existingClaim: jenkins-pv-claim 
+  # Using Existing Claims instead
+  # storageClass: rook-ceph-block  # Leave empty to use default storage class
+  # size: "20Gi"
+  # accessMode: ReadWriteOnce
+
+# TODO: Review Paramater options and fix
+# Jenkins agent configuration
+agent:
+  enabled: true
+  # Default agent pod template
+  podTemplates:
+    default: |
+      - name: default
+        label: jenkins-agent
+        serviceAccount: jenkins
+        containers:
+          - name: jnlp
+            image: jenkins/inbound-agent:latest
+            resourceRequestCpu: "100m"
+            resourceRequestMemory: "128Mi"
+            resourceLimitCpu: "1000m"
+            resourceLimitMemory: "1Gi"
+
+
+# Service account for Jenkins
+# manifest file in the repo isn't used for now
+serviceAccount:
+  create: true
+  name: jenkins
+
+
+# helm upgrade --install jenkins jenkins/jenkins --namespace jenkins -f jenkins-values.yaml --history-max=3
+# helm uninstall jenkins -n jenkins
+
+# kubectl get secret -n jenkins jenkins -o=jsonpath='{.data.jenkins-admin-password}' | base64 --decode; echo
