@@ -91,5 +91,9 @@ lokiCanary:
 test:
   enabled: false
 
+chunksCache:
+  allocatedMemory: 2048
+  allocatedCPU: 250m
+
 # helm upgrade --install loki grafana-community/loki --namespace loki -f loki-values.yaml --history-max=3
 # helm uninstall loki -n loki
