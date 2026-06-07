@@ -6,6 +6,20 @@ metadata:
 spec:
   version: 8.15.0
   count: 1
+  podTemplate:
+    spec:
+      containers:
+      - name: kibana
+        env:
+          - name: NODE_OPTIONS
+            value: "--max-old-space-size=1024"
+        resources:
+          requests:
+            cpu: 128m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1586Mi
   elasticsearchRef:
     name: "efk"
   http:  # NOTE disabling kibana automatic TLS configuration

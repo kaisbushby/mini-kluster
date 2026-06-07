@@ -56,5 +56,6 @@ ingress:
 
 # Resource allocation guide:
 # https://oneuptime.com/blog/post/2026-03-31-rook-resource-limits-requests/view
+# https://oneuptime.com/blog/post/2026-03-31-rook-set-resources-csi-plugin-pods/view
 
 # helm upgrade --install --namespace rook-ceph rook-ceph-cluster rook-release/rook-ceph-cluster -f rook-ceph-cluster-values.yaml

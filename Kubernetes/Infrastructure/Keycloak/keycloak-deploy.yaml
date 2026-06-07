@@ -5,7 +5,16 @@ metadata:
   namespace: keycloak
 spec:
   # Number of instances in the cluster
-  instances: 2
+  instances: 
+  # Resource Allocation
+  resources:
+    requests:
+      cpu: 64m
+      memory: 896Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
   # External Database connection
   db:
     vendor: postgres

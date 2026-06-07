@@ -91,9 +91,32 @@ lokiCanary:
 test:
   enabled: false
 
+resultsCache:
+  resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 1586Mi
+
+  # -- Amount of resources allocated to chunks-cache for object storage
+  allocatedMemory: 1024
+  allocatedCPU: 400m
+
+
 chunksCache:
-  allocatedMemory: 2048
-  allocatedCPU: 250m
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 2048Mi
+
+  # -- Amount of resources allocated to chunks-cache for object storage
+  allocatedMemory: 1536
+  allocatedCPU: 400m
 
 # helm upgrade --install loki grafana-community/loki --namespace loki -f loki-values.yaml --history-max=3
 # helm uninstall loki -n loki

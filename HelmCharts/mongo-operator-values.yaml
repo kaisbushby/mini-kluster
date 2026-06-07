@@ -1,1 +1,12 @@
-# helm install community-operator mongodb/community-operator --namespace mongodb --set operator.watchNamespace="*"
+operator:
+  resources:
+    requests:
+      cpu: 32m
+      memory: 64Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+      
+
+# helm upgrade --install community-operator mongodb/community-operator --namespace mongodb -f mongo-operator-values.yaml --set operator.watchNamespace="*"
+# helm uninstall community-operator -n mongodb
