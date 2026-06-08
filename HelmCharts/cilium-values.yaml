@@ -44,6 +44,12 @@ k8sServicePort: 6444
 kubeProxyReplacement: true
 kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
 
+# Required settings for Istio
+socketLB:
+  hostNamespaceOnly: true
+cni:
+  exclusive: false
+
 # -- Configure IP Address Management mode.
 # ref: https://docs.cilium.io/en/stable/network/concepts/ipam/
 ipam:

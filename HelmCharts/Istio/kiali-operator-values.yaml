@@ -1,0 +1,37 @@
+cr:
+  create: true
+  namespace: kiali
+  spec:
+    istio_namespace: "istio-system"
+    # Specifies how the application will be publicly accessed
+    server:
+      web_fqdn: "kiali.homelab.kbushby.com"
+      web_port: "443"
+      web_schema: "https"
+      web_root: "/"
+    auth:
+      strategy: "anonymous"
+    external_services:
+      prometheus:
+        url: "http://kube-prometheus-stack-prometheus.kube-prom-stack.svc.cluster.local:9090"
+      grafana:
+        enabled: true
+        internal_url: "http://grafana.kube-prom-stack.svc.cluster.local/"
+        external_url: "https://grafana.homelab.kbushby.com"
+        auth:
+          type: bearer
+          use_kiali_token: true
+      tracing:
+        enabled: true
+        internal_url: "http://tempo-query-frontend.tempo.svc.cluster.local:3200"
+        provider: "tempo"
+        tempo_config:
+          org_id: "1"
+          datasource_uid: "a8d2ef1c-d31c-4de5-a90b-e7bc5252cd00"
+        use_grpc: true
+        grpc_port: 9095
+    deployment:
+      logger:
+        log_level: debug
+
+# helm upgrade --install kiali-operator kiali/kiali-operator --namespace kiali -f Istio/kiali-operator-values.yaml --history-max=3

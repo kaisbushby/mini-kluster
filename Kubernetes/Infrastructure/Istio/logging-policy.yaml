@@ -1,0 +1,16 @@
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: minimal-logging-policy
+  namespace: istio-system
+spec:
+  accessLogging:
+    - providers:
+        - name: envoy
+      filter:
+        expression: >
+          (!has(response.code) || response.code >= 400 || response.duration > duration('2s'))
+          && (!has(request.url_path)
+          || (!request.url_path.contains('/health')
+          && !request.url_path.contains('/ready')
+          && !request.url_path.contains('/metrics')))

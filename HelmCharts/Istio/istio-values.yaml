@@ -1,0 +1,9 @@
+# helm install istio-base istio/base -n istio-system --wait
+# helm install istio-cni istio/cni -n istio-system --set profile=ambient --wait
+# helm install ztunnel istio/ztunnel -n istio-system --wait --set resources.requests.cpu=16m --set resources.requests.memory=32Mi
+# helm install istio-ingress istio/gateway -n istio-ingress --set resources.requests.cpu=16m --set resources.requests.memory=32Mi --wait
+
+
+# https://oneuptime.com/blog/post/2026-02-24-how-to-reduce-access-log-volume-in-production-with-istio/view#a-practical-production-configuration
+# https://oneuptime.com/blog/post/2026-02-24-how-to-configure-istio-metrics-with-prometheus/view
+

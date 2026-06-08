@@ -1,0 +1,21 @@
+resources:
+  requests:
+    cpu: 150m 
+    memory: 256Mi 
+
+meshConfig:  
+  # Enabling distributed traces
+  enableTracing: true
+  extensionProviders:
+  - name: otel-tracing
+    opentelemetry:
+      port: 4317
+      service: otel-collector.otel.svc.cluster.local
+      # service: tempo-distributor.tempo.svc.cluster.local
+      resource_detectors:
+        environment: {}
+  defaultConfig:
+    tracing:
+      sampling: 10.0  # 100% sampling for testing, reduce in production 
+
+# helm upgrade --install istiod istio/istiod --namespace istio-system --set profile=ambient -f Istio/istiod-values.yaml --wait --history-max=3

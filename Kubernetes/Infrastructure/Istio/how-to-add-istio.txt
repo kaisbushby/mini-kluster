@@ -1,0 +1,7 @@
+To use Istio in a Kubernetes cluster, labels would need to be added to a resouece (e.g. namespace)
+Details: https://istio.io/latest/docs/ambient/usage/add-workloads/
+For this cluster, use the following command
+#   kubectl label namespace <ns-name> istio.io/dataplane-mode=ambient
+To remove the label, use the following command
+#   kubectl label namespace <ns-name> istio.io/dataplane-mode-
+
