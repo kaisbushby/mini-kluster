@@ -133,7 +133,7 @@ prometheus:
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: 24Gi
+              storage: 30Gi
     ##
     ## Extra arguments
     extraArgs:
