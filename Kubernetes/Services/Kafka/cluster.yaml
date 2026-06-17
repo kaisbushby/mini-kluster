@@ -1,0 +1,82 @@
+# https://oneuptime.com/blog/post/2026-02-20-kafka-kubernetes-deployment/view#step-2-create-a-kafka-cluster
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaNodePool
+metadata:
+  name: kafka
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: dev-cluster
+spec:
+  replicas: 3
+  # Using Combine mode, since there is only 3 worker nodes
+  roles:
+    - controller
+    - broker
+  storage:
+    type: persistent-claim
+    size: 10Gi
+    class: rook-ceph-block-single
+    deleteClaim: false
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 64m
+    limits:
+      memory: 4Gi
+      cpu: "2"
+  # JVM options for the Kafka nodes
+  jvmOptions:
+    -Xms: 64m
+    -Xmx: 2048m
+---
+apiVersion: kafka.strimzi.io/v1
+kind: Kafka
+metadata:
+  name: dev-cluster
+  namespace: kafka
+  annotations:
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft: enabled
+spec:
+  kafka:
+    version: 4.2.0
+    metadataVersion: 4.2-IV1
+    listeners:
+      # Internal listener for in-cluster communication
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+        authentication:
+          type: scram-sha-512
+      # TLS listener for secure communication
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+    config:
+      delete.topic.enable: "true"
+      # Use 3 partitions by default for new topics
+      num.partitions: 3
+      # Replication factor for internal topics
+      offsets.topic.replication.factor: 3
+      transaction.state.log.replication.factor: 3
+      transaction.state.log.min.isr: 2
+      default.replication.factor: 3
+      min.insync.replicas: 2
+      # Log retention set to 7 days
+      log.retention.hours: 168
+      # Segment size of 1 GB
+      log.segment.bytes: 1073741824
+    authorization:
+      type: simple
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: kafka-metrics
+          key: kafka-metrics-config.yml
+  # Entity operator manages topics and users
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}

@@ -1,0 +1,10 @@
+resources:
+  limits:
+    memory: 384Mi
+    cpu: 1000m
+  requests:
+    memory: 64Mi
+    cpu: 50m
+
+# helm upgrade --install strimzi-kafka-operator strimzi/strimzi-kafka-operator --namespace kafka -f kafka-operator-values.yaml --history-max=3
+# helm uninstall strimzi-kafka-operator -n kafka

@@ -1,0 +1,63 @@
+# Creates a user with SCRAM-SHA-512 authentication
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaUser
+metadata:
+  name: app-producer
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: dev-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # Allow producing to user-events topic
+      - resource:
+          type: topic
+          name: user-events
+          patternType: literal
+        operations:
+          - Write
+          - Describe
+        host: "*"
+      # Required when the producer has idempotence enabled
+      - resource:
+          type: cluster
+          name: kafka-cluster
+        operations:
+          - IdempotentWrite
+        host: "*"
+
+---
+
+# Creates a user with SCRAM-SHA-512 authentication
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaUser
+metadata:
+  name: app-consumer
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: dev-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # Allow producing to user-events topic
+      - resource:
+          type: topic
+          name: user-events
+          patternType: literal
+        operations:
+          - Read
+          - Describe
+        host: "*"
+      # Required when the producer has idempotence enabled
+      - resource:
+          type: cluster
+          name: kafka-cluster
+        operations:
+          - IdempotentWrite
+        host: "*"
