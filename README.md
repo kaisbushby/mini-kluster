@@ -95,6 +95,7 @@ I've added an LLM inferencing node, which I made using spare PC parts and a RTX 
 - [ ] Create a single disk StorageClass with CRUSH mapping for Postgres
 - [ ] Jenkins CICD
 - [ ] Apache Nifi
+- [ ] Fix ntfy
 
 #### Hardware setup on Cluster
 
