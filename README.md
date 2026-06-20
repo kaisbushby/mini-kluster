@@ -16,54 +16,54 @@ The cluster was originally physically located in a cardboard box in the corner o
 <!-- https://dashboardicons.com -->
 ### On the K3s Cluster
 
-|                                                        |  Category              | Service                     | Description |
-| ---------                                              | -----------            | -----------                 | ----------- |
-| <img width=35 src="Docs/Icons/K3s.svg">                | Kuberntes              | K3S                         | Description |
-| <img width=35 src="Docs/Icons/Cilium.svg">             | Networking             | Cilium                      | Description |
-| <img width=35 src="Docs/Icons/CoreDNS.svg">            | Networking             | CoreDNS                     | Description |
-| <img width=35 src="Docs/Icons/ExternalDNS.png">        | Networking             | ExternalDNS                 | Description |
-| <img width=35 src="Docs/Icons/Istio.svg">              | Networking             | Istio                       | Description |
-| <img width=35 src="Docs/Icons/NGINX.svg">              | Networking             | NGINX                       | Description |
-| <img width=35 src="Docs/Icons/Rancher.svg">            | Management             | Rancher                     | Description |
-| <img width=35 src="Docs/Icons/Rook.svg">               | Storage                | Rook Ceph                   | Description |
-| <img width=35 src="Docs/Icons/ESO.svg">                | Secrets/Certificates   | External Secrets Operator   | Description |
-| <img width=35 src="Docs/Icons/CertManager.svg">        | Secrets/Certificates   | CertManager                 | Description |
-| <img width=35 src="Docs/Icons/Prometheus.svg">         | Observibility          | Prometheus                  | Description |
-| <img width=35 src="Docs/Icons/Grafana.svg">            | Observibility          | Grafana                     | Description |
-| <img width=35 src="Docs/Icons/Fluentbit.svg">          | Observibility          | Fluentbit                   | Description |
-| <img width=35 src="Docs/Icons/Loki.svg">               | Observibility          | Loki                        | Description |
-| <img width=35 src="Docs/Icons/Elastic Search.svg">     | Observibility          | Elastic Search              | Description |
-| <img width=35 src="Docs/Icons/Kibana.svg">             | Observibility          | Kibana                      | Description |
-| <img width=35 src="Docs/Icons/Tempo.svg">              | Observibility          | Tempo                       | Description |
-| <img width=35 src="Docs/Icons/Keycloak.svg">           | Security               | Keycloak                    | Description |
-| <img width=35 src="Docs/Icons/OAuth2-Proxy.svg">       | Security               | OAuth2-Proxy                | Description |
-| <img width=35 src="Docs/Icons/Apache Kafka.svg">       | Micro Serives          | Kafka                       | Description |
-| <img width=35 src="Docs/Icons/CloudNativePG.svg">      | Micro Serives          | CloudNativePG               | Description |
-| <img width=35 src="Docs/Icons/MongoDB.svg">            | Micro Serives          | MongoDB                     | Description |
-| <img width=35 src="Docs/Icons/RabbitMQ.svg">           | Micro Serives          | RabbitMQ                    | Description |
-| <img width=35 src="Docs/Icons/Jenkins.svg">            | CICD                   | Jenkins                     | Description |
-|                                                        | Paragraph              | Text                        | Description |
+|                                                        | Service                     |  Category              | Description |
+| ---------                                              | -----------                 | -----------            | ----------- |
+| <img width=35 src="Docs/Icons/K3s.svg">                | K3S                         | Kuberntes              | Description |
+| <img width=35 src="Docs/Icons/Cilium.svg">             | Cilium                      | Networking             | Description |
+| <img width=35 src="Docs/Icons/CoreDNS.svg">            | CoreDNS                     | Networking             | Description |
+| <img width=35 src="Docs/Icons/ExternalDNS.png">        | ExternalDNS                 | Networking             | Description |
+| <img width=35 src="Docs/Icons/Istio.svg">              | Istio                       | Networking             | Description |
+| <img width=35 src="Docs/Icons/NGINX.svg">              | NGINX                       | Networking             | Description |
+| <img width=35 src="Docs/Icons/Rancher.svg">            | Rancher                     | Management             | Description |
+| <img width=35 src="Docs/Icons/Rook.svg">               | Rook Ceph                   | Storage                | Description |
+| <img width=35 src="Docs/Icons/ESO.svg">                | External Secrets Operator   | Secrets/Certificates   | Description |
+| <img width=35 src="Docs/Icons/CertManager.svg">        | CertManager                 | Secrets/Certificates   | Description |
+| <img width=35 src="Docs/Icons/Prometheus.svg">         | Prometheus                  | Observibility          | Description |
+| <img width=35 src="Docs/Icons/Grafana.svg">            | Grafana                     | Observibility          | Description |
+| <img width=35 src="Docs/Icons/Fluentbit.svg">          | Fluentbit                   | Observibility          | Description |
+| <img width=35 src="Docs/Icons/Loki.svg">               | Loki                        | Observibility          | Description |
+| <img width=35 src="Docs/Icons/Elastic Search.svg">     | Elastic Search              | Observibility          | Description |
+| <img width=35 src="Docs/Icons/Kibana.svg">             | Kibana                      | Observibility          | Description |
+| <img width=35 src="Docs/Icons/Tempo.svg">              | Tempo                       | Observibility          | Description |
+| <img width=35 src="Docs/Icons/Keycloak.svg">           | Keycloak                    | Security               | Description |
+| <img width=35 src="Docs/Icons/OAuth2-Proxy.svg">       | OAuth2-Proxy                | Security               | Description |
+| <img width=35 src="Docs/Icons/Apache Kafka.svg">       | Kafka                       | Micro Serives          | Description |
+| <img width=35 src="Docs/Icons/CloudNativePG.svg">      | CloudNativePG               | Micro Serives          | Description |
+| <img width=35 src="Docs/Icons/MongoDB.svg">            | MongoDB                     | Micro Serives          | Description |
+| <img width=35 src="Docs/Icons/RabbitMQ.svg">           | RabbitMQ                    | Micro Serives          | Description |
+| <img width=35 src="Docs/Icons/Jenkins.svg">            | Jenkins                     | CICD                   | Description |
+|                                                        | Text                        | Paragraph              | Description |
 
 ### Externally hosted
 
-|                                                        | Category               | Service                     | Description |
-| -----------------                                      | -----------            | -----------                 | ----------- |
-| <img width=35 src="Docs/Icons/Technitium.svg">         | Networking             | Technitium DNS              | Description |
-| <img width=35 src="Docs/Icons/Helm.svg">               | Management             | Helm                        | Description |
-| <img width=35 src="Docs/Icons/HashiCorp Vault.svg">    | Secrets/Certificates   | Hashicorp Vault             | Description |
-| <img width=35 src="Docs/Icons/RustFS.svg">             | Storage                | RustFS                      | Running on NAS |
+|                                                        | Service                     | Category               | Description |
+| -----------------                                      | -----------                 | -----------            | ----------- |
+| <img width=35 src="Docs/Icons/Technitium.svg">         | Technitium DNS              | Networking             | Description |
+| <img width=35 src="Docs/Icons/Helm.svg">               | Helm                        | Management             | Description |
+| <img width=35 src="Docs/Icons/HashiCorp Vault.svg">    | Hashicorp Vault             | Secrets/Certificates   | Description |
+| <img width=35 src="Docs/Icons/RustFS.svg">             | RustFS                      | Storage                | Running on NAS |
 
 ### Third-party
 
-|                                                        | Category               | Service                     | Description |
-| --------------------                                   | -----------            | -----------                 | ----------- |
-| <img width=35 src="Docs/Icons/LetsEncrypt.svg">        | Secrets/Certificates   | Lets Encrypt                | Description |
-| <img width=35 src="Docs/Icons/Cloudflare.svg">         | Networking             | Cloudflare                  | Description |
-| <img width=35 src="Docs/Icons/GitHub.svg">             | Code Repository        | GitHub                      | Description |
+|                                                        | Service                     | Category               | Description |
+| --------------------                                   | -----------                 | -----------            | ----------- |
+| <img width=35 src="Docs/Icons/LetsEncrypt.svg">        | Lets Encrypt                | Secrets/Certificates   | Description |
+| <img width=35 src="Docs/Icons/Cloudflare.svg">         | Cloudflare                  | Networking             | Description |
+| <img width=35 src="Docs/Icons/GitHub.svg">             | GitHub                      | Code Repository        | Description |
 
 
 
-### New AI Node!!
+### Introducing the new AI node!
 I've added an LLM inferencing node, which I made using spare PC parts and a RTX 4080 and 64GB RAM that I pulled out from my gaming system. The aim of this node is to run vLLM and llama.cpp for interencing LLM models to analyse unstructured linguistic data and run as a coding agent.
 
 ### TODO List
