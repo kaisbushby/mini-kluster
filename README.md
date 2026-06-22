@@ -19,48 +19,48 @@ The cluster was originally physically located in a cardboard box in the corner o
 
 |                                                        | Service                     |  Category              | Description |
 | ---------                                              | -----------                 | -----------            | ----------- |
-| <img width=35 src="Docs/Icons/K3s.svg">                | K3S                         | Kuberntes              | Lightweight version of K3s that uses etcd |
-| <img width=35 src="Docs/Icons/Cilium.svg">             | Cilium                      | Networking             | Networking CNI to replace the default K3s CNI  |
-| <img width=35 src="Docs/Icons/CoreDNS.svg">            | CoreDNS                     | Networking             | Internal Kubernetes DNS server  |
-| <img width=35 src="Docs/Icons/ExternalDNS.png">        | ExternalDNS                 | Networking             | Updated A/AAAA records on an External DNS server |
-| <img width=35 src="Docs/Icons/Istio.svg">              | Istio                       | Networking             | Service mesh for Kubernetes |
-| <img width=35 src="Docs/Icons/NGINX.svg">              | NGINX                       | Networking             | Loadbalancer and Ingress |
-| <img width=35 src="Docs/Icons/Rancher.svg">            | Rancher                     | Management             | Kubernetes Cluster Management tool |
-| <img width=35 src="Docs/Icons/Rook.svg">               | Rook Ceph                   | Storage                | Storage Orchestrator for Kubernetes. Includes Block, NFS and Bucket storage |
-| <img width=35 src="Docs/Icons/ESO.svg">                | External Secrets Operator   | Secrets/Certificates   | Syncs Kubernetes secrets with Hashicorp secrets  |
-| <img width=35 src="Docs/Icons/CertManager.svg">        | CertManager                 | Secrets/Certificates   | Manages/Registers TLS Certificates |
-| <img width=35 src="Docs/Icons/Prometheus.svg">         | Prometheus                  | Observibility          | Real time metrics monitoring |
-| <img width=35 src="Docs/Icons/Grafana.svg">            | Grafana                     | Observibility          | UI for Metrics/Logs/Telemetry |
-| <img width=35 src="Docs/Icons/Fluentbit.svg">          | Fluentbit                   | Observibility          | Log collector and aggregation |
-| <img width=35 src="Docs/Icons/Loki.svg">               | Loki                        | Observibility          | Log aggregation for Grafana |
-| <img width=35 src="Docs/Icons/Elastic Search.svg">     | Elastic Search              | Observibility          | Log storage/analytics |
-| <img width=35 src="Docs/Icons/Kibana.svg">             | Kibana                      | Observibility          | UI for ElasticSearch |
-| <img width=35 src="Docs/Icons/Tempo.svg">              | Tempo                       | Observibility          | Open-Telemetry monitoring |
-| <img width=35 src="Docs/Icons/Keycloak.svg">           | Keycloak                    | Security               | Description |
-| <img width=35 src="Docs/Icons/OAuth2-Proxy.svg">       | OAuth2-Proxy                | Security               | Description |
-| <img width=35 src="Docs/Icons/Apache Kafka.svg">       | Kafka                       | Micro Service          | Real-time event/data streaming platform |
-| <img width=35 src="Docs/Icons/CloudNativePG.svg">      | CloudNativePG               | Micro Service          | PostgreSql specialised for Kubernetes |
-| <img width=35 src="Docs/Icons/MongoDB.svg">            | MongoDB                     | Micro Service          | NoSQL Database |
-| <img width=35 src="Docs/Icons/RabbitMQ.svg">           | RabbitMQ                    | Micro Service          | Message Broker |
-| <img width=35 src="Docs/Icons/Jenkins.svg">            | Jenkins                     | CICD                   | Code CICD |
-| <img width=35 src="Docs/Icons/ntfy.svg">               | ntfy                        |                        | Sends push notification to ios/Android |
+| <img width=35 src="/assets/images/K3s.svg">                | K3S                         | Kuberntes              | Lightweight version of K3s that uses etcd |
+| <img width=35 src="/assets/images/Cilium.svg">             | Cilium                      | Networking             | Networking CNI to replace the default K3s CNI  |
+| <img width=35 src="/assets/images/CoreDNS.svg">            | CoreDNS                     | Networking             | Internal Kubernetes DNS server  |
+| <img width=35 src="/assets/images/ExternalDNS.png">        | ExternalDNS                 | Networking             | Updated A/AAAA records on an External DNS server |
+| <img width=35 src="/assets/images/Istio.svg">              | Istio                       | Networking             | Service mesh for Kubernetes |
+| <img width=35 src="/assets/images/NGINX.svg">              | NGINX                       | Networking             | Loadbalancer and Ingress |
+| <img width=35 src="/assets/images/Rancher.svg">            | Rancher                     | Management             | Kubernetes Cluster Management tool |
+| <img width=35 src="/assets/images/Rook.svg">               | Rook Ceph                   | Storage                | Storage Orchestrator for Kubernetes. Includes Block, NFS and Bucket storage |
+| <img width=35 src="/assets/images/ESO.svg">                | External Secrets Operator   | Secrets/Certificates   | Syncs Kubernetes secrets with Hashicorp secrets  |
+| <img width=35 src="/assets/images/CertManager.svg">        | CertManager                 | Secrets/Certificates   | Manages/Registers TLS Certificates |
+| <img width=35 src="/assets/images/Prometheus.svg">         | Prometheus                  | Observibility          | Real time metrics monitoring |
+| <img width=35 src="/assets/images/Grafana.svg">            | Grafana                     | Observibility          | UI for Metrics/Logs/Telemetry |
+| <img width=35 src="/assets/images/Fluentbit.svg">          | Fluentbit                   | Observibility          | Log collector and aggregation |
+| <img width=35 src="/assets/images/Loki.svg">               | Loki                        | Observibility          | Log aggregation for Grafana |
+| <img width=35 src="/assets/images/Elastic Search.svg">     | Elastic Search              | Observibility          | Log storage/analytics |
+| <img width=35 src="/assets/images/Kibana.svg">             | Kibana                      | Observibility          | UI for ElasticSearch |
+| <img width=35 src="/assets/images/Tempo.svg">              | Tempo                       | Observibility          | Open-Telemetry monitoring |
+| <img width=35 src="/assets/images/Keycloak.svg">           | Keycloak                    | Security               | Description |
+| <img width=35 src="/assets/images/OAuth2-Proxy.svg">       | OAuth2-Proxy                | Security               | Description |
+| <img width=35 src="/assets/images/Apache Kafka.svg">       | Kafka                       | Micro Service          | Real-time event/data streaming platform |
+| <img width=35 src="/assets/images/CloudNativePG.svg">      | CloudNativePG               | Micro Service          | PostgreSql specialised for Kubernetes |
+| <img width=35 src="/assets/images/MongoDB.svg">            | MongoDB                     | Micro Service          | NoSQL Database |
+| <img width=35 src="/assets/images/RabbitMQ.svg">           | RabbitMQ                    | Micro Service          | Message Broker |
+| <img width=35 src="/assets/images/Jenkins.svg">            | Jenkins                     | CICD                   | Code CICD |
+| <img width=35 src="/assets/images/ntfy.svg">               | ntfy                        |                        | Sends push notification to ios/Android |
 
 ### Externally hosted
 
 |                                                        | Service                     | Category               | Description |
 | -----------------                                      | -----------                 | -----------            | ----------- |
-| <img width=35 src="Docs/Icons/Technitium.svg">         | Technitium DNS              | Networking             | DNS Server for external home devices |
-| <img width=35 src="Docs/Icons/Helm.svg">               | Helm                        | Management             | Kubernetes package manager|
-| <img width=35 src="Docs/Icons/HashiCorp Vault.svg">    | Hashicorp Vault             | Secrets/Certificates   | Secret management for the cluster |
-| <img width=35 src="Docs/Icons/RustFS.svg">             | RustFS                      | Storage                | Running on NAS for simplifying backups |
+| <img width=35 src="/assets/images/Technitium.svg">         | Technitium DNS              | Networking             | DNS Server for external home devices |
+| <img width=35 src="/assets/images/Helm.svg">               | Helm                        | Management             | Kubernetes package manager|
+| <img width=35 src="/assets/images/HashiCorp Vault.svg">    | Hashicorp Vault             | Secrets/Certificates   | Secret management for the cluster |
+| <img width=35 src="/assets/images/RustFS.svg">             | RustFS                      | Storage                | Running on NAS for simplifying backups |
 
 ### Third-party
 
 |                                                        | Service                     | Category               | Description |
 | --------------------                                   | -----------                 | -----------            | ----------- |
-| <img width=35 src="Docs/Icons/LetsEncrypt.svg">        | Lets Encrypt                | Secrets/Certificates   | Signs valid TLS certificates |
-| <img width=35 src="Docs/Icons/Cloudflare.svg">         | Cloudflare                  | Networking             | Domain name registration and forwarding traffic via Cloudflared tunnels |
-| <img width=35 src="Docs/Icons/GitHub.svg">             | GitHub                      | Code Repository        | Code Repository |
+| <img width=35 src="/assets/images/LetsEncrypt.svg">        | Lets Encrypt                | Secrets/Certificates   | Signs valid TLS certificates |
+| <img width=35 src="/assets/images/Cloudflare.svg">         | Cloudflare                  | Networking             | Domain name registration and forwarding traffic via Cloudflared tunnels |
+| <img width=35 src="/assets/images/GitHub.svg">             | GitHub                      | Code Repository        | Code Repository |
 
 
 ### Introducing the new AI node!
