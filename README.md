@@ -5,7 +5,10 @@
 This is my own personal project to build a Kubernetes cluster at home, which is heavily based off [Riscanfre's pi-cluster project](https://github.com/ricsanfre/pi-cluster/tree/master) with a few minor variations in the technology stack and its configuration.
 The philosophy of this project is to reduce reliance on 3rd party services and cloud resources, and locally host everything using open source software as much as possible.
 
-The services in the cluster are manually managed by the Raspberry Pi via Helm and Kubectl. Although Ansible is already setup on the Raspberry Pi, I haven't gotten through learning and setting up the playbooks to automate the setup of the cluster.
+  <img width="350px" src="/assets/IMG_1688.webp" />
+  <img width="350px" src="/assets/IMG_1685.webp" />
+
+The services in the cluster are manually managed by the Raspberry Pi via Helm and Kubectl. Although I have Ansible setup on the Raspberry Pi, I haven't gotten through learning and setting up the playbooks to automate the setup of the cluster, which I plan on doing in the future.
 
 The cluster consists of 6 Dell Optiplex Micro for the Master/Worker nodes and a Raspberry Pi 5 as a Control node for running Ansible and Kubectl/Helm. The backup solution for the cluster is a Synology DS223 2-bay NAS 8TB x 2 disk running in RAID 1.
 The network switch used to connect the cluster together is a Ubiquiti UniFi Switch Lite 16 port switch. Origianally the cluster was using an old TP-Link PoE 8 port network switch, but it  had multiple PoE related issues with the Raspberry Pi PoE hat. In the end TP Link switch was replaced with a Ubiquiti UniFi Switch Lite 8 port, then with the 16 port variant later on.
