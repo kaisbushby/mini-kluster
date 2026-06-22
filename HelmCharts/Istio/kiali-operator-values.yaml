@@ -10,7 +10,11 @@ cr:
       web_schema: "https"
       web_root: "/"
     auth:
-      strategy: "anonymous"
+      strategy: "openid"
+      openid:
+        client_id: "kiali-oidc"
+        disable_rbac: true
+        issuer_uri: "https://iam.homelab.kbushby.com/realms/master"
     external_services:
       prometheus:
         url: "http://kube-prometheus-stack-prometheus.kube-prom-stack.svc.cluster.local:9090"
