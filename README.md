@@ -19,16 +19,17 @@ The cluster was originally physically located in a cardboard box in the corner o
 
 |                                                              | Service                     |  Category              | Description |
 | ---------                                                    | -----------                 | -----------            | ----------- |
-| <img width=35 src="/assets/images/K3s.svg" />                | K3S                         | Kuberntes              | Lightweight version of K3s that uses etcd |
-| <img width=35 src="/assets/images/Cilium.svg" />             | Cilium                      | Networking             | Networking CNI to replace the default K3s CNI  |
+| <img width=35 src="/assets/images/K3s.svg" />                | K3S                         | Kuberntes              | Lightweight version of K3s|
+| <img width=35 src="/assets/images/Cilium.svg" />             | Cilium                      | Networking             | Network CNI plugin to replace the default K3s CNI  |
 | <img width=35 src="/assets/images/CoreDNS.svg" />            | CoreDNS                     | Networking             | Internal Kubernetes DNS server  |
-| <img width=35 src="/assets/images/ExternalDNS.png" />        | ExternalDNS                 | Networking             | Updated A/AAAA records on an External DNS server |
-| <img width=35 src="/assets/images/Istio.svg" />              | Istio                       | Networking             | Service mesh for Kubernetes |
+| <img width=35 src="/assets/images/ExternalDNS.png" />        | ExternalDNS                 | Networking             | Updates A/AAAA records on External DNS server |
+| <img width=35 src="/assets/images/Istio.svg" />              | Istio                       | Networking             | Service mesh |
 | <img width=35 src="/assets/images/NGINX.svg" />              | NGINX                       | Networking             | Loadbalancer and Ingress |
+|                                                              | Cloudflared Tunnels         | Networking             | Forwards public facing traffic into the cluster network |
 | <img width=35 src="/assets/images/Rancher.svg" />            | Rancher                     | Management             | Kubernetes Cluster Management tool |
 | <img width=35 src="/assets/images/Rook.svg" />               | Rook Ceph                   | Storage                | Storage Orchestrator for Kubernetes. Includes Block, NFS and Bucket storage |
 | <img width=35 src="/assets/images/ESO.svg" />                | External Secrets Operator   | Secrets/Certificates   | Syncs Kubernetes secrets with Hashicorp secrets  |
-| <img width=35 src="/assets/images/CertManager.svg" />        | CertManager                 | Secrets/Certificates   | Manages/Registers TLS Certificates |
+| <img width=35 src="/assets/images/CertManager.svg" />        | CertManager                 | Secrets/Certificates   | Manages and registers TLS Certificates |
 | <img width=35 src="/assets/images/Prometheus.svg" />         | Prometheus                  | Observibility          | Real time metrics monitoring |
 | <img width=35 src="/assets/images/Grafana.svg" />            | Grafana                     | Observibility          | UI for Metrics/Logs/Telemetry |
 | <img width=35 src="/assets/images/Fluentbit.svg" />          | Fluentbit                   | Observibility          | Log collector and aggregation |
@@ -41,25 +42,25 @@ The cluster was originally physically located in a cardboard box in the corner o
 | <img width=35 src="/assets/images/Apache Kafka.svg" />       | Kafka                       | Micro Service          | Real-time event/data streaming platform |
 | <img width=35 src="/assets/images/CloudNativePG.svg" />      | CloudNativePG               | Micro Service          | PostgreSql specialised for Kubernetes |
 | <img width=35 src="/assets/images/MongoDB.svg" />            | MongoDB                     | Micro Service          | NoSQL Database |
-| <img width=35 src="/assets/images/RabbitMQ.svg" />           | RabbitMQ                    | Micro Service          | Message Broker |
-| <img width=35 src="/assets/images/Jenkins.svg" />            | Jenkins                     | CICD                   | Code CICD |
-| <img width=35 src="/assets/images/ntfy.svg" />               | ntfy                        |                        | Sends push notification to ios/Android |
+| <img width=35 src="/assets/images/RabbitMQ.svg" />           | RabbitMQ                    | Micro Service          | Message Queue/Broker |
+| <img width=35 src="/assets/images/Jenkins.svg" />            | Jenkins                     | Code                   | Code CICD |
+| <img width=35 src="/assets/images/ntfy.svg" />               | ntfy                        |                        | Sends push notification to iOS/Android |
 
 ### Externally hosted
 
 |                                                              | Service                     | Category               | Description |
 | -----------------                                            | -----------                 | -----------            | ----------- |
-| <img width=35 src="/assets/images/Technitium.svg" />         | Technitium DNS              | Networking             | DNS Server for external home devices |
-| <img width=35 src="/assets/images/Helm.svg" />               | Helm                        | Management             | Kubernetes package manager|
-| <img width=35 src="/assets/images/HashiCorp Vault.svg" />    | Hashicorp Vault             | Secrets/Certificates   | Secret management for the cluster |
-| <img width=35 src="/assets/images/RustFS.svg" />             | RustFS                      | Storage                | Running on NAS for simplifying backups |
+| <img width=35 src="/assets/images/Technitium.svg" />         | Technitium DNS              | Networking             | DNS Server for the home network |
+| <img width=35 src="/assets/images/Helm.svg" />               | Helm                        | Management             | Kubernetes package manager  |
+| <img width=35 src="/assets/images/HashiCorp Vault.svg" />    | Hashicorp Vault             | Secrets/Certificates   | Secrets management for the cluster |
+| <img width=35 src="/assets/images/RustFS.svg" />             | RustFS                      | Storage                | Provides S3 API for the NAS |
 
 ### Third-party
 
 |                                                              | Service                     | Category               | Description |
 | --------------------                                         | -----------                 | -----------            | ----------- |
 | <img width=35 src="/assets/images/LetsEncrypt.svg" />        | Lets Encrypt                | Secrets/Certificates   | Signs valid TLS certificates |
-| <img width=35 src="/assets/images/Cloudflare.svg" />         | Cloudflare                  | Networking             | Domain name registration and forwarding traffic via Cloudflared tunnels |
+| <img width=35 src="/assets/images/Cloudflare.svg" />         | Cloudflare                  | Networking             | Domain name registration and forwards traffic via Cloudflared tunnels |
 | <img width=35 src="/assets/images/GitHub.svg" />             | GitHub                      | Code Repository        | Code Repository |
 
 
