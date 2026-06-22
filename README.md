@@ -5,12 +5,12 @@
 This is my own personal project to build a Kubernetes cluster at home, which is heavily based off [Riscanfre's pi-cluster project](https://github.com/ricsanfre/pi-cluster/tree/master) with a few minor variations in the technology stack and its configuration.
 The philosophy of this project is to reduce reliance on 3rd party services and cloud resources, and locally host everything using open source software as much as possible.
 
-The services in the cluster are manually managed by the Raspberry Pi via Helm and Kubectl. Although I have Ansible setup on the Raspberry Pi, I haven't gotten through learning and setting up the playbooks to automate the setup of the cluster, which I plan on doing in the future.
+The services in the cluster are manually managed by the Raspberry Pi via Helm and Kubectl. Although Ansible is already setup on the Raspberry Pi, I haven't gotten through learning and setting up the playbooks to automate the setup of the cluster.
 
-The cluster consists of 6 Dell Optiplex Micro for the Master/Worker nodes and a Raspberry Pi 5 as a Control node for running Ansible and Kubectl/Helm. The backup solution for the cluster is a Synology DS223 2-bay NAS running a 8TB x 2 disk RAID 0 configuration, which was gifted by my Dad.
-The network switch used to connect to connect the cluster together is a Ubiquiti UniFi Switch Lite 16 port switch. Origianally the cluster was using an old TP-Link PoE 8 port network switch but I had a lot of PoE related issues with the Raspberry Pi. In the end I replaced the TP Link switch with a Ubiquiti UniFi Switch Lite 8 port, and then with the 16 port variant later on.
+The cluster consists of 6 Dell Optiplex Micro for the Master/Worker nodes and a Raspberry Pi 5 as a Control node for running Ansible and Kubectl/Helm. The backup solution for the cluster is a Synology DS223 2-bay NAS 8TB x 2 disk running in RAID 1.
+The network switch used to connect the cluster together is a Ubiquiti UniFi Switch Lite 16 port switch. Origianally the cluster was using an old TP-Link PoE 8 port network switch, but it  had multiple PoE related issues with the Raspberry Pi PoE hat. In the end TP Link switch was replaced with a Ubiquiti UniFi Switch Lite 8 port, then with the 16 port variant later on.
 
-The cluster was originally physically located in a cardboard box in the corner of my room, but after finding the [GeekPi RackMate T2](https://deskpi.com/products/deskpi-rackmate-t2-rackmount-12u-server-cabinet-for-network-servers-audio-and-video-equipment) on sale during a Black Friday I replaced it with the cardboard box immidiately. To mount the Dell Optiplex Micros to the new server rack, I 3D printed some [Dell Optiplex Micro 10 inch rack mounts](https://www.printables.com/model/980541-dell-optiplex-7060-micropc-10-inch-rack-mount) and [Unifi 16 port PoE 10 inch rack mounts](https://www.printables.com/model/994138-ubiquiti-switch-lite-16-poe-10-inch-half-rack-moun) with my Ender3 v3 SE and Black PETG filament.
+The cluster originally used a cardboard box as a an enclosure to keep all the components together, but was later replaced with a [GeekPi RackMate T2](https://deskpi.com/products/deskpi-rackmate-t2-rackmount-12u-server-cabinet-for-network-servers-audio-and-video-equipment) after finding it on sale during Black Friday. To mount the Dell Optiplex Micros and the network switch to the new server rack, I 3D printed some [Dell Optiplex Micro 10 inch rack mounts](https://www.printables.com/model/980541-dell-optiplex-7060-micropc-10-inch-rack-mount) and [Unifi 16 port PoE 10 inch rack mounts](https://www.printables.com/model/994138-ubiquiti-switch-lite-16-poe-10-inch-half-rack-moun) with an Ender3 v3 SE and Black PETG filament.
 
 ## Hosted Services
 <!-- Icons from this website -->
@@ -25,7 +25,7 @@ The cluster was originally physically located in a cardboard box in the corner o
 | <img width=35 src="/assets/images/ExternalDNS.png" />        | ExternalDNS                 | Networking             | Updates A/AAAA records on External DNS server |
 | <img width=35 src="/assets/images/Istio.svg" />              | Istio                       | Networking             | Service mesh |
 | <img width=35 src="/assets/images/NGINX.svg" />              | NGINX                       | Networking             | Loadbalancer and Ingress |
-|                                                              | Cloudflared Tunnels         | Networking             | Forwards public facing traffic into the cluster network |
+| <img width=35 src="/assets/images/Cloudflare.svg" />         | Cloudflared Tunnels         | Networking             | Forwards public facing traffic into the cluster network |
 | <img width=35 src="/assets/images/Rancher.svg" />            | Rancher                     | Management             | Kubernetes Cluster Management tool |
 | <img width=35 src="/assets/images/Rook.svg" />               | Rook Ceph                   | Storage                | Storage Orchestrator for Kubernetes. Includes Block, NFS and Bucket storage |
 | <img width=35 src="/assets/images/ESO.svg" />                | External Secrets Operator   | Secrets/Certificates   | Syncs Kubernetes secrets with Hashicorp secrets  |
@@ -43,7 +43,7 @@ The cluster was originally physically located in a cardboard box in the corner o
 | <img width=35 src="/assets/images/CloudNativePG.svg" />      | CloudNativePG               | Micro Service          | PostgreSql specialised for Kubernetes |
 | <img width=35 src="/assets/images/MongoDB.svg" />            | MongoDB                     | Micro Service          | NoSQL Database |
 | <img width=35 src="/assets/images/RabbitMQ.svg" />           | RabbitMQ                    | Micro Service          | Message Queue/Broker |
-| <img width=35 src="/assets/images/Jenkins.svg" />            | Jenkins                     | Code                   | Code CICD |
+| <img width=35 src="/assets/images/Jenkins.svg" />            | Jenkins                     | Code                   | Code CI/CD |
 | <img width=35 src="/assets/images/ntfy.svg" />               | ntfy                        |                        | Sends push notification to iOS/Android |
 
 ### Externally hosted
@@ -53,7 +53,7 @@ The cluster was originally physically located in a cardboard box in the corner o
 | <img width=35 src="/assets/images/Technitium.svg" />         | Technitium DNS              | Networking             | DNS Server for the home network |
 | <img width=35 src="/assets/images/Helm.svg" />               | Helm                        | Management             | Kubernetes package manager  |
 | <img width=35 src="/assets/images/HashiCorp Vault.svg" />    | Hashicorp Vault             | Secrets/Certificates   | Secrets management for the cluster |
-| <img width=35 src="/assets/images/RustFS.svg" />             | RustFS                      | Storage                | Provides S3 API for the NAS |
+| <img width=35 src="/assets/images/RustFS.svg" />             | RustFS                      | Storage                | Expose S3 API for the NAS |
 
 ### Third-party
 
