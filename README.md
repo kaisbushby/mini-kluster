@@ -2,12 +2,11 @@
 
 ## Node configuration of K3s Cluster
 
-This is my own personal project to build a Kubernetes cluster at home, which is heavily based off [Riscanfre's pi-cluster project](https://github.com/ricsanfre/pi-cluster/tree/master) with a few minor variations in the technology stack and its configuration.
-The philosophy of this project is to reduce reliance on 3rd party services and cloud resources, and locally host everything using open source software as much as possible.
-
+This is my own personal project to build a Kubernetes cluster at home, which is based off [Riscanfre's pi-cluster project](https://github.com/ricsanfre/pi-cluster/tree/master) with a few minor variations in the technology stack and its configuration.
+The philosophy of this project is self host services using OSS (Open-Source-Software) as much as possible and keep reliance on 3rd party services to the bare minimum.
 TODO: Add Network diagram here
 
-The services in the cluster are manually managed by the Raspberry Pi via Helm and Kubectl. Although I have Ansible setup on the Raspberry Pi, I haven't gotten through learning and setting up the playbooks to automate the setup of the cluster, which I plan on doing in the future.
+The services in the cluster are manually managed by the Raspberry Pi via Helm and Kubectl. Although Ansible is already setup on the Raspberry Pi, I haven't gotten through learning and setting up the playbooks to automate the setup of the cluster.
 
 The cluster consists of 6 Dell Optiplex Micro for the Master/Worker nodes and a Raspberry Pi 5 as a Control node for running Ansible and Kubectl/Helm. The backup solution for the cluster is a Synology DS223 2-bay NAS 8TB x 2 disk running in RAID 1.
 The network switch used to connect the cluster together is a Ubiquiti UniFi Switch Lite 16 port switch. Origianally the cluster was using an old TP-Link PoE 8 port network switch, but it  had multiple PoE related issues with the Raspberry Pi PoE hat. In the end TP Link switch was replaced with a Ubiquiti UniFi Switch Lite 8 port, then with the 16 port variant later on.
@@ -24,53 +23,54 @@ The cluster originally used a cardboard box as a an enclosure to keep all the co
 
 |                                                              | Service                     |  Category              | Description |
 | ---------                                                    | -----------                 | -----------            | ----------- |
-| <img width=35 src="/assets/images/K3s.svg" />                | K3S                         | Kuberntes              | Lightweight version of K3s|
-| <img width=35 src="/assets/images/Cilium.svg" />             | Cilium                      | Networking             | Network CNI plugin to replace the default K3s CNI  |
-| <img width=35 src="/assets/images/CoreDNS.svg" />            | CoreDNS                     | Networking             | Internal Kubernetes DNS server  |
-| <img width=35 src="/assets/images/ExternalDNS.png" />        | ExternalDNS                 | Networking             | Updates A/AAAA records on External DNS server |
-| <img width=35 src="/assets/images/Istio.svg" />              | Istio                       | Networking             | Service mesh |
-| <img width=35 src="/assets/images/NGINX.svg" />              | NGINX                       | Networking             | Loadbalancer and Ingress |
-| <img width=35 src="/assets/images/Cloudflare.svg" />         | Cloudflared Tunnels         | Networking             | Forwards public facing traffic into the cluster network |
-| <img width=35 src="/assets/images/Rancher.svg" />            | Rancher                     | Management             | Kubernetes Cluster Management tool |
-| <img width=35 src="/assets/images/Rook.svg" />               | Rook Ceph                   | Storage                | Storage Orchestrator for Kubernetes. Includes Block, NFS and Bucket storage |
-| <img width=35 src="/assets/images/ESO.svg" />                | External Secrets Operator   | Secrets/Certificates   | Syncs Kubernetes secrets with Hashicorp secrets  |
-| <img width=35 src="/assets/images/CertManager.svg" />        | CertManager                 | Secrets/Certificates   | Manages and registers TLS Certificates |
-| <img width=35 src="/assets/images/Prometheus.svg" />         | Prometheus                  | Observibility          | Real time metrics monitoring |
-| <img width=35 src="/assets/images/Grafana.svg" />            | Grafana                     | Observibility          | UI for Metrics/Logs/Telemetry |
-| <img width=35 src="/assets/images/Fluentbit.svg" />          | Fluentbit                   | Observibility          | Log collector and aggregation |
-| <img width=35 src="/assets/images/Loki.svg" />               | Loki                        | Observibility          | Log aggregation for Grafana |
-| <img width=35 src="/assets/images/Elastic Search.svg" />     | Elastic Search              | Observibility          | Log storage/analytics |
-| <img width=35 src="/assets/images/Kibana.svg" />             | Kibana                      | Observibility          | UI for ElasticSearch |
-| <img width=35 src="/assets/images/Tempo.svg" />              | Tempo                       | Observibility          | Open-Telemetry monitoring |
-| <img width=35 src="/assets/images/Keycloak.svg" />           | Keycloak                    | Security               | Description |
-| <img width=35 src="/assets/images/OAuth2-Proxy.svg" />       | OAuth2-Proxy                | Security               | Description |
-| <img width=35 src="/assets/images/Apache Kafka.svg" />       | Kafka                       | Micro Service          | Real-time event/data streaming platform |
-| <img width=35 src="/assets/images/CloudNativePG.svg" />      | CloudNativePG               | Micro Service          | PostgreSql specialised for Kubernetes |
-| <img width=35 src="/assets/images/MongoDB.svg" />            | MongoDB                     | Micro Service          | NoSQL Database |
-| <img width=35 src="/assets/images/RabbitMQ.svg" />           | RabbitMQ                    | Micro Service          | Message Queue/Broker |
-| <img width=35 src="/assets/images/Jenkins.svg" />            | Jenkins                     | Code                   | Code CI/CD |
-| <img width=35 src="/assets/images/ntfy.svg" />               | ntfy                        |                        | Sends push notification to iOS/Android |
+| <img width=35 src="/assets/icons/K3s.svg" />                 | K3S                         | Kuberntes              | Lightweight version of K3s|
+| <img width=35 src="/assets/icons/Cilium.svg" />              | Cilium                      | Networking             | Network CNI plugin to replace the default K3s CNI |
+| <img width=35 src="/assets/icons/CoreDNS.svg" />             | CoreDNS                     | Networking             | Internal Kubernetes DNS server  |
+| <img width=35 src="/assets/icons/ExternalDNS.png" />         | ExternalDNS                 | Networking             | Updates A/AAAA records on External DNS servers |
+| <img width=35 src="/assets/icons/Istio.svg" />               | Istio                       | Networking             | Service mesh |
+| <img width=35 src="/assets/icons/NGINX.svg" />               | NGINX                       | Networking             | Loadbalancer and Ingress |
+| <img width=35 src="/assets/icons/Cloudflare.svg" />          | Cloudflared Tunnels         | Networking             | Forwards public facing traffic into the cluster network |
+| <img width=35 src="/assets/icons/Rancher.svg" />             | Rancher                     | Management             | Kubernetes Cluster Management tool |
+| <img width=35 src="/assets/icons/Rook.svg" />                | Rook Ceph                   | Storage                | Storage Orchestrator for Kubernetes. Provides Block, NFS and S3 compatible bucket storage |
+| <img width=35 src="/assets/icons/ESO.svg" />                 | External Secrets Operator   | Secrets/Certificates   | Syncs Kubernetes secrets with Hashicorp secrets  |
+| <img width=35 src="/assets/icons/CertManager.svg" />         | CertManager                 | Secrets/Certificates   | Manages and registers TLS Certificates |
+| <img width=35 src="/assets/icons/Prometheus.svg" />          | Prometheus                  | Observibility          | Real-time metrics monitoring |
+| <img width=35 src="/assets/icons/Grafana.svg" />             | Grafana                     | Observibility          | UI for Metrics/Logs/Telemetry |
+| <img width=35 src="/assets/icons/Fluentbit.svg" />           | Fluentbit                   | Observibility          | Log collector and aggregation |
+| <img width=35 src="/assets/icons/Loki.svg" />                | Loki                        | Observibility          | Log aggregation for Grafana |
+| <img width=35 src="/assets/icons/Elastic Search.svg" />      | Elastic Search              | Observibility          | Log storage/analytics |
+| <img width=35 src="/assets/icons/Kibana.svg" />              | Kibana                      | Observibility          | UI for ElasticSearch |
+| <img width=35 src="/assets/icons/Tempo.svg" />               | Tempo                       | Observibility          | Open-Telemetry monitoring |
+| <img width=35 src="/assets/icons/Keycloak.svg" />            | Keycloak                    | Security               | Identity Provider |
+| <img width=35 src="/assets/icons/OAuth2-Proxy.svg" />        | OAuth2-Proxy                | Security               | Provides OIDC security to insecure applications |
+| <img width=35 src="/assets/icons/Apache Kafka.svg" />        | Kafka                       | Micro Service          | Real-time event/data streaming platform |
+| <img width=35 src="/assets/icons/CloudNativePG.svg" />       | CloudNativePG               | Micro Service          | PostgreSql specialised for Kubernetes |
+| <img width=35 src="/assets/icons/MongoDB.svg" />             | MongoDB                     | Micro Service          | NoSQL Database |
+| <img width=35 src="/assets/icons/RabbitMQ.svg" />            | RabbitMQ                    | Micro Service          | Message Queue/Broker |
+| <img width=35 src="/assets/icons/ntfy.svg" />                | ntfy                        | Micro Service          | Sends push notification to iOS/Android |
+| <img width=35 src="/assets/icons/Jenkins.svg" />             | Jenkins                     | Code                   | Code CI/CD |
 
 ### Externally hosted
 
 |                                                              | Service                     | Category               | Description |
 | -----------------                                            | -----------                 | -----------            | ----------- |
-| <img width=35 src="/assets/images/Technitium.svg" />         | Technitium DNS              | Networking             | DNS Server for the home network |
-| <img width=35 src="/assets/images/Helm.svg" />               | Helm                        | Management             | Kubernetes package manager  |
-| <img width=35 src="/assets/images/HashiCorp Vault.svg" />    | Hashicorp Vault             | Secrets/Certificates   | Secrets management for the cluster |
-| <img width=35 src="/assets/images/RustFS.svg" />             | RustFS                      | Storage                | Expose S3 API for the NAS |
+| <img width=35 src="/assets/icons/Technitium.svg" />          | Technitium DNS              | Networking             | DNS Server for the home network |
+| <img width=35 src="/assets/icons/Helm.svg" />                | Helm                        | Management             | Kubernetes package manager  |
+| <img width=35 src="/assets/icons/HashiCorp Vault.svg" />     | Hashicorp Vault             | Secrets/Certificates   | Secrets management for the cluster |
+| <img width=35 src="/assets/icons/RustFS.svg" />              | RustFS                      | Storage                | Expose S3 API on the NAS for cluster backups. Using RustFS instead of MinIO due to the degredation of the MinIO Community Edition |
 
 ### Third-party
 
 |                                                              | Service                     | Category               | Description |
 | --------------------                                         | -----------                 | -----------            | ----------- |
-| <img width=35 src="/assets/images/LetsEncrypt.svg" />        | Lets Encrypt                | Secrets/Certificates   | Signs valid TLS certificates |
-| <img width=35 src="/assets/images/Cloudflare.svg" />         | Cloudflare                  | Networking             | Domain name registration and forwards traffic via Cloudflared tunnels |
-| <img width=35 src="/assets/images/GitHub.svg" />             | GitHub                      | Code Repository        | Code Repository |
+| <img width=35 src="/assets/icons/LetsEncrypt.svg" />         | Lets Encrypt                | Secrets/Certificates   | Signs valid TLS certificates |
+| <img width=35 src="/assets/icons/Certbot.svg" />             | Certbot                     | Secrets/Certificates   | Automates fetching and deploying TLS certificates from Lets Encrypt |
+| <img width=35 src="/assets/icons/Cloudflare.svg" />          | Cloudflare                  | Networking             | Domain name registration and forwards traffic via Cloudflared tunnels |
+| <img width=35 src="/assets/icons/GitHub.svg" />              | GitHub                      | Code Repository        | Code Repository |
 
 
-### Introducing the new AI node!
-I've added an LLM inferencing node, which I made using spare PC parts and a RTX 4080 and 64GB RAM that I pulled out from my gaming system. The aim of this node is to run vLLM and llama.cpp for interencing LLM models to analyse unstructured linguistic data and run as a coding agent.
+### Expanding the cluster with the AI node
+Added an LLM inferencing node, which was made using spare PC parts and a RTX 4080 and 64GB RAM that was pulled out from my gaming system. The aim of this node is to run vLLM and llama.cpp for interencing LLM models to analyse unstructured linguistic data and run as a coding agent.
 
 ### TODO List
 
@@ -87,8 +87,9 @@ I've added an LLM inferencing node, which I made using spare PC parts and a RTX 
 - [x] External DNS + update credentials for DNS Server
 - [x] Longhorn
 - [x] SeaweedFS
-- [ ] K3s Backup solution with NAS
-- [ ] Node Backup solution with NAS
+- [x] S3 API for NAS
+  - [ ] K3s Backup solution
+  - [ ] Node Backup solution
 - [x] Replace Longhorn/SeaweedFS with Rook Ceph/RadosGW
 - [x] Keycloak + Integrate OIDC with other services
 - [x] Prometheus with Grafana
@@ -96,6 +97,7 @@ I've added an LLM inferencing node, which I made using spare PC parts and a RTX 
 - [x] EKF Logging stack (ElasticSearch, Fluentbit, Kibana)
 - [x] Fluentbit + Loki for Grafana
 - [x] OpenTelemetry and Tempo
+- [x] Milvus on AI node
 - [x] Apache Kafka on KRaft mode
 - [ ] Create a single disk StorageClass with CRUSH mapping for Postgres
 - [ ] Jenkins CICD
