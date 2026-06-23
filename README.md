@@ -2,19 +2,23 @@
 
 ## Node configuration of K3s Cluster
 
-This is my own personal project to build a Kubernetes cluster at home, which is based off [Riscanfre's pi-cluster project](https://github.com/ricsanfre/pi-cluster/tree/master) with a few minor variations in the technology stack and its configuration.
+This is my personal project to build a Kubernetes cluster at home, which is based off [Riscanfre's pi-cluster project](https://github.com/ricsanfre/pi-cluster/tree/master) with a few minor variations in the technology stack and its configuration.
 The philosophy of this project is self host services using OSS (Open-Source-Software) as much as possible and keep reliance on 3rd party services to the bare minimum.
-TODO: Add Network diagram here
 
-The services in the cluster are manually managed by the Raspberry Pi via Helm and Kubectl. Although Ansible is already setup on the Raspberry Pi, I haven't gotten through learning and setting up the playbooks to automate the setup of the cluster.
+<b>TODO: Add Network diagram here</b>
 
 The cluster consists of 6 Dell Optiplex Micro for the Master/Worker nodes and a Raspberry Pi 5 as a Control node for running Ansible and Kubectl/Helm. The backup solution for the cluster is a Synology DS223 2-bay NAS 8TB x 2 disk running in RAID 1.
-The network switch used to connect the cluster together is a Ubiquiti UniFi Switch Lite 16 port switch. Origianally the cluster was using an old TP-Link PoE 8 port network switch, but it  had multiple PoE related issues with the Raspberry Pi PoE hat. In the end TP Link switch was replaced with a Ubiquiti UniFi Switch Lite 8 port, then with the 16 port variant later on.
+The network switch used to connect the cluster together is a Ubiquiti UniFi Switch Lite 16 port switch. Origianally the cluster was using an old TP-Link PoE 8 port network switch, but it had multiple PoE related issues with the Raspberry Pi. In the end TP Link switch was replaced with a Ubiquiti UniFi Switch Lite 8 port, then with the 16 port variant later on.
 
   <img width="350px" src="/assets/IMG_1685-edited.png" />
   <img width="350px" src="/assets/IMG_1688-edited.png" />
 
-The cluster originally used a cardboard box as a an enclosure to keep all the components together, but was later replaced with a [GeekPi RackMate T2](https://deskpi.com/products/deskpi-rackmate-t2-rackmount-12u-server-cabinet-for-network-servers-audio-and-video-equipment) after finding it on sale during Black Friday. To mount the Dell Optiplex Micros and the network switch to the new server rack, I 3D printed some [Dell Optiplex Micro 10 inch rack mounts](https://www.printables.com/model/980541-dell-optiplex-7060-micropc-10-inch-rack-mount) and [Unifi 16 port PoE 10 inch rack mounts](https://www.printables.com/model/994138-ubiquiti-switch-lite-16-poe-10-inch-half-rack-moun) with an Ender3 v3 SE and Black PETG filament.
+The cluster originally used a cardboard box as an enclosure to keep all the components together, but was later replaced with a [DeskPi RackMate T2](https://deskpi.com/products/deskpi-rackmate-t2-rackmount-12u-server-cabinet-for-network-servers-audio-and-video-equipment) after finding it on sale during Black Friday. 
+To mount the 6 Dell Optiplex Micros and the network switch to the RackMate T2, I 3D printed some [Dell Optiplex Micro 10 inch rack mounts](https://www.printables.com/model/980541-dell-optiplex-7060-micropc-10-inch-rack-mount) and [Unifi 16 port PoE 10 inch rack mounts](https://www.printables.com/model/994138-ubiquiti-switch-lite-16-poe-10-inch-half-rack-moun) with an Ender3 v3 SE and Black PETG filament.  The Raspberry Pi 5 was mounted using the [DeskPi 1U Raspberry Pi Rack](https://deskpi.com/products/deskpi-2pcs-kl-p24-micro-hdmi-to-hdmi-adapter-board-for-raspberry-pi-5-pi-4b-rackmate-accessories-sbc-shell-10-inch-1u-rack) included in the RackMate T2.
+
+#### Expanding the cluster with the AI node
+Added an LLM inferencing node, which was made using spare PC parts and a RTX 4080 and 64GB RAM that was pulled out from my gaming system. The aim of this node is to run vLLM and llama.cpp for interencing LLM models to analyse unstructured linguistic data and run as a coding agent.
+
 
 ## Hosted Services
 <!-- Icons from this website -->
@@ -68,9 +72,6 @@ The cluster originally used a cardboard box as a an enclosure to keep all the co
 | <img width=35 src="/assets/icons/Cloudflare.svg" />          | Cloudflare                  | Networking             | Domain name registration and forwards traffic via Cloudflared tunnels |
 | <img width=35 src="/assets/icons/GitHub.svg" />              | GitHub                      | Code Repository        | Code Repository |
 
-
-### Expanding the cluster with the AI node
-Added an LLM inferencing node, which was made using spare PC parts and a RTX 4080 and 64GB RAM that was pulled out from my gaming system. The aim of this node is to run vLLM and llama.cpp for interencing LLM models to analyse unstructured linguistic data and run as a coding agent.
 
 ### TODO List
 
