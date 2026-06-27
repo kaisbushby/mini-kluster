@@ -9,7 +9,7 @@ The philosophy of this project is to self host services using OSS (Open-Source-S
   <img width="500px" st src="/assets/NetworkDiagram.webp" />
 </div>
 
-The cluster consists of 6 Dell Optiplex Micro for the Master/Worker nodes and a Raspberry Pi 5 as a Control node for running Ansible and Kubectl/Helm. The backup solution for the cluster is a Synology DS223 2-bay NAS 8TB x 2 disk running in RAID 1.
+The cluster consists of 6 Dell Optiplex Micros for the Master/Worker nodes and a Raspberry Pi 5 4GB as a Control node for running Ansible and Kubectl/Helm. The backup solution for the cluster is a Synology DS223 2-bay NAS 8TB x 2 disk running in RAID 1.
 The network switch used to connect the cluster together is a Ubiquiti UniFi Switch Lite 16 port switch. Origianally the cluster was using an old TP-Link PoE 8 port network switch, but it had multiple PoE related issues with the Raspberry Pi. In the end TP Link switch was replaced with a Ubiquiti UniFi Switch Lite 8 port, then with the 16 port variant later on.
 
 <div styles="display:inline-block">
