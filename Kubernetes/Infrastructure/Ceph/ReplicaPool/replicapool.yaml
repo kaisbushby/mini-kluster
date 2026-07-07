@@ -7,6 +7,8 @@ spec:
   failureDomain: host
   replicated:
     size: 3
+  enableCrushUpdates: true
+
 
 # TODO: Consider migrating to  Erasure Coded RBD Pool (RAID 6) when adding new nodes
 # https://rook.io/docs/rook/v1.20/CRDs/Block-Storage/ceph-block-pool-crd/
