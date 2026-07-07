@@ -26,31 +26,42 @@ servers:
     configBlock: |-
       pods insecure
       fallthrough in-addr.arpa ip6.arpa
-      ttl 30
+  - name: hosts
+    parameters: /etc/coredns/NodeHosts
+    configBlock: |-
+      ttl 60
+      reload 15s
+      fallthrough
+    
   # Serves a /metrics endpoint on :9153, required for serviceMonitor
   - name: prometheus
     parameters: 0.0.0.0:9153
+  - name: cache
+    parameters: 30
+  - name: loop
+  - name: reload
+  - name: loadbalance
   - name: import
     parameters: /etc/coredns/custom/*.override
   - name: forward
     parameters: homelab.kbushby.com 192.168.20.2
   - name: forward
     parameters: . /etc/resolv.conf
-  - name: cache
-    parameters: 30
-  - name: loop
-  - name: reload
-  - name: loadbalance
+
 
 # When using preexisting k3s CoreDNS instance add the following to the exising
-# ServiceAccount, ConfigMap, Service, Deployment
+# ServiceAccount: coredns
+# ConfigMap:      coredns
+# Service:        kube-dns
+# Deployment      coredns
+
 ###
 # annotations:
-#   meta.helm.sh/release-name: coredns
-#   meta.helm.sh/release-namespace: kube-system
+#    meta.helm.sh/release-name: coredns
+#    meta.helm.sh/release-namespace: kube-system
 
 # labels:
-#   app.kubernetes.io/managed-by: Helm
+#    app.kubernetes.io/managed-by: Helm
 
 
 # helm upgrade --install coredns coredns/coredns --namespace=kube-system -f coredns-values.yaml --history-max=3
