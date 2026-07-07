@@ -19,7 +19,7 @@ spec:
           resources:
             requests:
               cpu: 100m
-              storage: 15Gi
+              storage: 25Gi
             limits:
               cpu: "1"
           storageClassName: rook-ceph-block
