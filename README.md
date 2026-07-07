@@ -103,10 +103,21 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
 - [x] OpenTelemetry and Tempo
 - [x] Milvus on AI node
 - [x] Apache Kafka on KRaft mode
+  - [ ] Conduktor as Kafka UI
 - [ ] Create a single disk StorageClass with CRUSH mapping for Postgres
 - [ ] Jenkins CICD
 - [ ] Apache Nifi
 - [ ] Fix ntfy
+- [ ] Move OIDC Secrets to HashiCorp Vault
+- [ ] Add SSO to services
+  - [x] Hubble UI
+  - [X] Prometheus Dashboard
+  - [X] Prometheus Alert Manager
+  - [ ] Grafana (use ini config)
+  - [ ] Ceph Dashboard
+  - [ ] Kibana
+  - [ ] Conduktor
+  - [ ] Jenkins
 
 #### Hardware setup on Cluster
 
@@ -121,3 +132,5 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
   - [x] Setup vLLM + llama.cpp environment
   - [x] Create script to run Coding Agent LLM
     - [ ] Tune script for higher t/s
+- [x] Include UPS into cluster
+  - [ ] Add safe shutdown script
