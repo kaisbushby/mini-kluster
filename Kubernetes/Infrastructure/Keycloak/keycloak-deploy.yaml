@@ -5,7 +5,7 @@ metadata:
   namespace: keycloak
 spec:
   # Number of instances in the cluster
-  instances: 
+  instances: 1
   # Resource Allocation
   resources:
     requests:
