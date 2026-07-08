@@ -8,6 +8,8 @@ spec:
   replicated:
     requireSafeReplicaSize: false
     size: 1
+  parameters:
+    min_size: "1"
   enableCrushUpdates: true
 
 # https://rook.io/docs/rook/v1.20/CRDs/Block-Storage/ceph-block-pool-crd/
