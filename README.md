@@ -110,13 +110,14 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
 - [ ] Fix ntfy
 - [ ] Move OIDC Secrets to HashiCorp Vault
 - [ ] Add SSO to services
+  - [X] Rancher
   - [x] Hubble UI
   - [X] Prometheus Dashboard
   - [X] Prometheus Alert Manager
   - [ ] Grafana (use ini config)
   - [ ] Ceph Dashboard
   - [ ] Kibana
-  - [ ] Conduktor
+  - [ ] Kafka Conduktor
   - [ ] Jenkins
 
 #### Hardware setup on Cluster
