@@ -15,7 +15,7 @@ spec:
   storage:
     type: persistent-claim
     size: 10Gi
-    class: rook-ceph-block-single
+    class: rook-ceph-block
     deleteClaim: false
   resources:
     requests:
