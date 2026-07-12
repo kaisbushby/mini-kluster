@@ -35,6 +35,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: cloudflare-ca-issuer
     cert-manager.io/common-name: kibana-logging.homelab.kbushby.com
+    external-dns.alpha.kubernetes.io/hostname: kibana-logging.homelab.kbushby.com
 spec:
   ingressClassName: nginx
   rules:
