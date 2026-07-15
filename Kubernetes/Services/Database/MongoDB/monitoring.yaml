@@ -1,0 +1,65 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mongodb-service-monitor
+  namespace: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb-exporter
+  namespaceSelector:
+    matchNames:
+      - mongodb
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-exporter
+  namespace: mongodb
+  labels:
+    app: mongodb-exporter
+spec:
+  selector:
+    app: mongodb-exporter
+  ports:
+    - name: metrics
+      port: 9216
+      targetPort: metrics
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-exporter
+  namespace: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb-exporter
+  template:
+    metadata:
+      labels:
+        app: mongodb-exporter
+    spec:
+      containers:
+        - name: exporter
+          image: percona/mongodb_exporter:0.51.0
+          args:
+            - --mongodb.uri=mongodb://monitor:n0tV3rys1cret0@mongodb-dev-svc.mongodb.svc.cluster.local/admin
+            # - --mongodb.uri=mongodb://monitor:n0tV3rys1cret0@mongodb-dev-svc.mongodb.svc.cluster.local/admin,mongodb://monitor:password@mongodb-test-svc.mongodb.svc.cluster.local/admin
+            - --collect-all
+            - --compatible-mode
+          ports:
+            - containerPort: 9216
+              name: metrics
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

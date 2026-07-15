@@ -28,7 +28,17 @@ spec:
           db: admin
         - name: userAdminAnyDatabase
           db: admin
-      scramCredentialsSecretName: mongodb-admin-scram
+      scramCredentialsSecretName: mongodb-admin-user
+    - name: monitor
+      db: admin
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: mongodb-dev-monitor-user
+      roles:
+        - name: clusterMonitor
+          db: admin
+        - name: readAnyDatabase
+          db: admin
+      scramCredentialsSecretName: mongodb-monitor-user
   additionalMongodConfig:
     storage.wiredTiger.engineConfig.journalCompressor: zlib
     net.compression.compressors: snappy,zstd,zlib
@@ -87,8 +97,8 @@ spec:
   ports:
     - name: mongodb
       protocol: TCP
-      port: 27017       # Port exposed inside the cluster
-      targetPort: 27017 # Port the MongoDB container listens on
+      port: 27017
+      targetPort: 27017
 ---
 apiVersion: v1
 kind: Secret
@@ -98,3 +108,14 @@ metadata:
 type: Opaque
 stringData:
   password: s1cret0
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-dev-monitor-user
+  namespace: mongodb
+type: Opaque
+stringData:
+  password: n0tV3rys1cret0
+
+  
