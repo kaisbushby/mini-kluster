@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kafka-dev-lb-tls
+  namespace: kafka
+spec:
+  dnsNames:
+  - "*.dev.homelab.kbushby.com"
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: cloudflare-ca-issuer
+  secretName: kafka-dev-lb-tls
+
+  # Required for kafka
+  privateKey:
+    encoding: PKCS8

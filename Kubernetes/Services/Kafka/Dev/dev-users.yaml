@@ -15,16 +15,16 @@ spec:
       # Allow producing to user-events topic
       - resource:
           type: topic
-          name: user-events
+          name: demo-topic
           patternType: literal
         operations:
+          - Read
           - Write
           - Describe
-        host: "*"
       # Required when the producer has idempotence enabled
       - resource:
           type: cluster
-          name: kafka-cluster
+          name: dev-cluster
         operations:
           - IdempotentWrite
         host: "*"
@@ -48,16 +48,17 @@ spec:
       # Allow producing to user-events topic
       - resource:
           type: topic
-          name: user-events
+          name: demo-topic
           patternType: literal
         operations:
           - Read
           - Describe
-        host: "*"
       # Required when the producer has idempotence enabled
       - resource:
           type: cluster
-          name: kafka-cluster
+          name: dev-cluster
         operations:
           - IdempotentWrite
-        host: "*"
+
+# kubectl get secret app-producer -o jsonpath='{.data.password}' -n kafka | base64 -d;echo
+# kubectl get secret app-consumer -o jsonpath='{.data.password}' -n kafka | base64 -d;echo

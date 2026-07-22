@@ -1,0 +1,188 @@
+# https://oneuptime.com/blog/post/2026-02-20-kafka-kubernetes-deployment/view#step-2-create-a-kafka-cluster
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaNodePool
+metadata:
+  name: kafka-dev
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: dev-cluster
+spec:
+  replicas: 3
+  # Using Combine mode, since there is only 3 worker nodes
+  roles:
+    - controller
+    - broker
+  storage:
+    type: jbod
+    volumes:
+      - id: 0
+        type: persistent-claim
+        size: 10Gi
+        class: rook-ceph-kafka
+        deleteClaim: true
+        kraftMetadata: shared
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 64m
+    limits:
+      memory: 4Gi
+      cpu: "2"
+---
+apiVersion: kafka.strimzi.io/v1
+kind: Kafka
+metadata:
+  name: dev-cluster
+  namespace: kafka
+  annotations:
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft: enabled
+spec:
+  kafka:
+    version: 4.2.0
+    metadataVersion: 4.2-IV1
+    logging:
+      type: inline
+      loggers:
+        rootLogger.level: "OFF"
+        logger.kafka.level: "OFF"
+        logger.orgapachekafka.level: "OFF"
+        logger.requestlogger.level: "OFF"
+        logger.requestchannel.level: "OFF"
+        logger.controller.level: "OFF"
+        logger.logcleaner.level: "OFF"
+        logger.statechange.level: "OFF"
+    listeners:
+      # Internal listener for in-cluster communication
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      # TLS listener for secure communication
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+        # authentication:
+        #   type: scram-sha-512
+      - name: external
+        port: 9094
+        type: loadbalancer
+        tls: true
+        # authentication:
+        #   type: scram-sha-512
+        configuration:
+          brokerCertChainAndKey:
+            secretName: kafka-dev-lb-tls
+            certificate:  tls.crt
+            key: tls.key
+          # class: nginx
+          bootstrap:
+            annotations:
+              external-dns.alpha.kubernetes.io/hostname: kafka.dev.homelab.kbushby.com
+              external-dns.alpha.kubernetes.io/ttl: "60"
+            # host: kafka.dev.homelab.kbushby.com
+            alternativeNames: 
+            - kafka.dev.homelab.kbushby.com
+          brokers:
+          - broker: 0
+            advertisedHost: kafka-broker-0.dev.homelab.kbushby.com
+            annotations:
+              external-dns.alpha.kubernetes.io/hostname: kafka-broker-0.dev.homelab.kbushby.com
+              external-dns.alpha.kubernetes.io/ttl: "60"
+          - broker: 1
+            advertisedHost: kafka-broker-1.dev.homelab.kbushby.com
+            annotations:
+              external-dns.alpha.kubernetes.io/hostname: kafka-broker-1.dev.homelab.kbushby.com
+              external-dns.alpha.kubernetes.io/ttl: "60"
+          - broker: 2
+            advertisedHost: kafka-broker-2.dev.homelab.kbushby.com
+            annotations:
+              external-dns.alpha.kubernetes.io/hostname: kafka-broker-2.dev.homelab.kbushby.com
+              external-dns.alpha.kubernetes.io/ttl: "60"
+    # authorization:
+    #   type: simple
+    config:
+      delete.topic.enable: "true"
+      # Use 3 partitions by default for new topics
+      num.partitions: 3
+      
+      # Replication factor for internal topics
+      offsets.topic.replication.factor: 3
+      transaction.state.log.replication.factor: 3
+      transaction.state.log.min.isr: 2
+      default.replication.factor: 3
+      min.insync.replicas: 2
+      # Flush settings (RBD handles durability at block level)
+      log.flush.interval.messages: "9223372036854775807"
+      log.flush.interval.ms: "9223372036854775807"
+      # Disable periodic flush check (let OS handle flushing)
+      log.flush.scheduler.interval.ms: "9223372036854775807"
+
+      # 5 minutes
+      initial.broker.registration.timeout.ms: 300000
+
+      # 100 seconds
+      heartbeat.interval.ms: 100000
+
+      # 5 minutes
+      session.timeout.ms: 300000
+
+      # Set the minimum allowed consumer session timeout to 10 seconds
+      group.min.session.timeout.ms: 10000
+      # Set the maximum allowed consumer session timeout to 45 minutes
+      group.max.session.timeout.ms: 2700000
+    
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: kafka-metrics
+          key: kafka-metrics-config.yml
+  # Entity operator manages topics and users
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: kafka-dev-lb
+#   namespace: kafka
+#   labels:
+#     app.kubernetes.io/instance: dev-cluster
+#     app.kubernetes.io/name: kafka
+#   annotations:
+#     external-dns.alpha.kubernetes.io/hostname: kafka.dev.homelab.kbushby.com
+#     strimzi.io/discovery: |-
+#       [ {
+#         "port" : 9092,
+#         "tls" : false,
+#         "protocol" : "kafka",
+#         "auth" : "scram-sha-512"
+#       }, {
+#         "port" : 9093,
+#         "tls" : true,
+#         "protocol" : "kafka",
+#         "auth" : "none"
+#       } ]
+# spec:
+#   type: LoadBalancer
+#   selector:
+#     strimzi.io/broker-role: "true"
+#     strimzi.io/cluster: dev-cluster
+#     strimzi.io/kind: Kafka
+#     strimzi.io/name: dev-cluster-kafka
+#   ports:
+#   - name: tcp-replication
+#     port: 9091
+#     protocol: TCP
+#     targetPort: tcp-replication
+#   - name: tcp-clients
+#     port: 9092
+#     protocol: TCP
+#     targetPort: tcp-clients
+#   - name: tcp-clientstls
+#     port: 9093
+#     protocol: TCP
+#     targetPort: tcp-clientstls

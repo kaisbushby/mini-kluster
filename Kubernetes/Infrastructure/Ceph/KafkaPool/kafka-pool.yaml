@@ -1,0 +1,20 @@
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: kafka-pool
+  namespace: rook-ceph
+spec:
+  failureDomain: host
+  replicated:
+    size: 3
+  enableCrushUpdates: true
+  parameters:
+    pg_num: "64"
+    pgp-num: "64"
+
+# ceph osd pool create kafka-pool 64 64
+# ceph osd pool set kafka-pool size 3
+# rbd pool init kafka-pool
+
+# TODO: Consider migrating to  Erasure Coded RBD Pool (RAID 6) when adding new nodes
+# https://rook.io/docs/rook/v1.20/CRDs/Block-Storage/ceph-block-pool-crd/

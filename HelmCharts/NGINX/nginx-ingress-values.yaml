@@ -1,4 +1,7 @@
 controller:
+  extraArgs:
+    enable-ssl-passthrough: true
+
   # Enabling Promethues metrics and Service Monitoring
   metrics:
     enabled: true
