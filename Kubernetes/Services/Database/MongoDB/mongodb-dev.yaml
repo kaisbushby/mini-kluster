@@ -44,15 +44,7 @@ spec:
     net.compression.compressors: snappy,zstd,zlib
   statefulSet:
     spec:
-      # selector:
-      #   matchLabels:
-      #     app: mongodb
-      #     environment: dev
       template:
-        # metadata:
-        #   labels:
-        #     app: mongodb
-        #     environment: dev
         spec:
           containers:
             - name: mongod
