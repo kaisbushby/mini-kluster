@@ -63,20 +63,19 @@ spec:
         port: 9093
         type: internal
         tls: true
-        # authentication:
-        #   type: scram-sha-512
+        authentication:
+          type: scram-sha-512
       - name: external
         port: 9094
         type: loadbalancer
         tls: true
-        # authentication:
-        #   type: scram-sha-512
+        authentication:
+          type: scram-sha-512
         configuration:
           brokerCertChainAndKey:
             secretName: kafka-dev-lb-tls
             certificate:  tls.crt
             key: tls.key
-          # class: nginx
           bootstrap:
             annotations:
               external-dns.alpha.kubernetes.io/hostname: kafka.dev.homelab.kbushby.com
@@ -100,8 +99,8 @@ spec:
             annotations:
               external-dns.alpha.kubernetes.io/hostname: kafka-broker-2.dev.homelab.kbushby.com
               external-dns.alpha.kubernetes.io/ttl: "60"
-    # authorization:
-    #   type: simple
+    authorization:
+      type: simple
     config:
       delete.topic.enable: "true"
       # Use 3 partitions by default for new topics
@@ -143,46 +142,3 @@ spec:
   entityOperator:
     topicOperator: {}
     userOperator: {}
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: kafka-dev-lb
-#   namespace: kafka
-#   labels:
-#     app.kubernetes.io/instance: dev-cluster
-#     app.kubernetes.io/name: kafka
-#   annotations:
-#     external-dns.alpha.kubernetes.io/hostname: kafka.dev.homelab.kbushby.com
-#     strimzi.io/discovery: |-
-#       [ {
-#         "port" : 9092,
-#         "tls" : false,
-#         "protocol" : "kafka",
-#         "auth" : "scram-sha-512"
-#       }, {
-#         "port" : 9093,
-#         "tls" : true,
-#         "protocol" : "kafka",
-#         "auth" : "none"
-#       } ]
-# spec:
-#   type: LoadBalancer
-#   selector:
-#     strimzi.io/broker-role: "true"
-#     strimzi.io/cluster: dev-cluster
-#     strimzi.io/kind: Kafka
-#     strimzi.io/name: dev-cluster-kafka
-#   ports:
-#   - name: tcp-replication
-#     port: 9091
-#     protocol: TCP
-#     targetPort: tcp-replication
-#   - name: tcp-clients
-#     port: 9092
-#     protocol: TCP
-#     targetPort: tcp-clients
-#   - name: tcp-clientstls
-#     port: 9093
-#     protocol: TCP
-#     targetPort: tcp-clientstls

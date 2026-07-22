@@ -21,6 +21,7 @@ spec:
           - Read
           - Write
           - Describe
+        host: "*"
       # Required when the producer has idempotence enabled
       - resource:
           type: cluster
@@ -53,6 +54,14 @@ spec:
         operations:
           - Read
           - Describe
+        host: "*"
+      - resource:
+          type: group
+          name: test-consumer-group
+          patternType: literal
+        operations:
+          - Read
+        host: "*"
       # Required when the producer has idempotence enabled
       - resource:
           type: cluster
