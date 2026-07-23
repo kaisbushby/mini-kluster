@@ -141,4 +141,10 @@ spec:
   # Entity operator manages topics and users
   entityOperator:
     topicOperator: {}
-    userOperator: {}
+    userOperator: 
+      logging:
+        type: inline
+        loggers:
+          rootLogger.level: "OFF"
+          logger.controller.level: "OFF"
+    
