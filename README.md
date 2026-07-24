@@ -116,6 +116,7 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
   - [X] Prometheus Alert Manager
   - [X] Istio Kiali
   - [X] pgAdmin4
+  - [ ] OAuth2 Proxy
   - [ ] Grafana (use ini config)
   - [ ] Ceph Dashboard
   - [ ] Kibana
