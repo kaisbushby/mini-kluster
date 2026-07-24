@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin-deployment
+  namespace: pgadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      securityContext:
+        fsGroup: 5050
+      # initContainers:
+      #   - name: modify-config-permission
+      #     image: busybox
+      #     command: ["sh", "-c", "chown -R 5050:5050 /var/lib/pgadmin"]
+      #     securityContext:
+      #       runAsUser: 0 # Runs as root to execute chown successfully
+      #     volumeMounts:
+      #     - name: pgadmin-data
+      #       mountPath: /var/lib/pgadmin
+      containers:
+        - name: pgadmin
+          image: dpage/pgadmin4:9.16
+          ports:
+            - containerPort: 80
+          env:
+          # Core Configuration - Required
+          - name: PGADMIN_DEFAULT_EMAIL
+            value: "admin@kbushby.com"
+          - name: PGADMIN_DEFAULT_PASSWORD
+            value: "password"
+          # OIDC Secret
+          - name: KEYCLOAK_OIDC_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: pgadmin-oidc-secret
+                key: secret
+          volumeMounts:
+          - name: config-local-configmap
+            mountPath: /pgadmin4/config_local.py
+            subPath: config_local.py
+          - name: pgadmin-data
+            mountPath: /var/lib/pgadmin
+      volumes:
+        - name: config-local-configmap
+          configMap:
+            name: pgadmin4-oidc-config
+            defaultMode: 0666
+        - name: pgadmin-data
+          persistentVolumeClaim:
+            claimName: pgadmin-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin-service
+  namespace: pgadmin
+spec:
+  selector:
+    app: pgadmin
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgadmin
+  namespace: pgadmin
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+    cert-manager.io/common-name: pgadmin.homelab.kbushby.com
+    external-dns.alpha.kubernetes.io/hostname: pgadmin.homelab.kbushby.com
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: pgadmin.homelab.kbushby.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: pgadmin-service
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - pgadmin.homelab.kbushby.com
+    secretName: pgadmin-tls

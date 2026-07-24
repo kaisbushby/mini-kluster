@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pgadmin-pvc
+  namespace: pgadmin
+spec:
+  accessModes:
+    - ReadWriteOnce   # Permits single-node read-write mounting
+  resources:
+    requests:
+      storage: 5Gi 
+  storageClassName: rook-ceph-block
