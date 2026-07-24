@@ -51,4 +51,5 @@ spec:
 #          name: keycloak-minio-secret
 #          key: AWS_SECRET_ACCESS_KEY
 #    retentionPolicy: "30d" 
----
+
+#kubectl get secret -n database-dev postgresql-db-app -o=jsonpath='{.data.password}' | base64 --decode; echo

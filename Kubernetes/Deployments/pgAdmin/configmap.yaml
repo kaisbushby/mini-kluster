@@ -7,7 +7,7 @@ data:
   config_local.py: |
     import os
 
-    MASTER_PASSWORD_REQUIRED = False
+    MASTER_PASSWORD_REQUIRED = True
     OAUTH2_CLIENT_SECRET = os.environ['KEYCLOAK_OIDC_SECRET']
 
     # Enable OIDC Authentication
