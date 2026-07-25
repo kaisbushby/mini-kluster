@@ -180,8 +180,17 @@ kube-state-metrics:
 # Grafana Configuration
 grafana:
   fullnameOverride: grafana
-  # Admin user password
-  adminPassword: "s1cret0"
+
+  # Admin Password Secret
+  # kubectl get secret grafana -o jsonpath='{.data.admin-password}' -n kube-prom-stack | base64 -d;echo
+
+  # Grabs OIDC Secret from Vault generated Secret
+  envValueFrom:
+    GF_AUTH_OAUTH_CLIENT_SECRET:
+      secretKeyRef:
+        name: grafana-oidc-secret
+        key: secret
+
   # grafana configuration
   grafana.ini:
     server:
@@ -195,21 +204,25 @@ grafana:
       # ref: https://github.com/grafana/grafana/issues/72577#issuecomment-1682277779
       serve_from_sub_path: false
 
-    # auth.generic_oauth:
-    #   enabled: true
-    #   name: Keycloak-OIDC
-    #   allow_sign_up: false
-    #   client_id: grafana-oidc
-    #   client_secret: # secret
-    #   scopes: "openid email profile offline_access roles"
-    #   email_attribute_path: email
-    #   login_attribute_path: username
-    #   name_attribute_path: full_name
-    #   auth_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/auth
-    #   token_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/token
-    #   api_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/userinfo
-    #   logout_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/logout
-    #   role_attribute_path: contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer'
+    auth.generic_oauth:
+      enabled: true
+      name: Keycloak OIDC
+      allow_sign_up: true
+      client_id: grafana-oidc
+      client_secret: ${GF_AUTH_OAUTH_CLIENT_SECRET}
+        
+      scopes: openid email profile offline_access roles groups
+      email_attribute_path: email
+      login_attribute_path: username
+      name_attribute_path: preferred_username
+      groups_attribute_path: groups
+      allow_assign_grafana_admin: true
+      auth_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/auth
+      token_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/token
+      api_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/userinfo
+      logout_url: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/logout
+      role_attribute_strict: true
+      role_attribute_path: contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer'
   ##
   ## Provisioning sidecars
   ##
