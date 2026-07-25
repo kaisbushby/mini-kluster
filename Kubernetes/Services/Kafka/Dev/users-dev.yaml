@@ -68,6 +68,42 @@ spec:
           name: dev-cluster
         operations:
           - IdempotentWrite
-
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaUser
+metadata:
+  name: admin-dev
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: dev-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      - resource:
+          type: topic
+          name: '*'
+          patternType: literal
+        operations:
+          - All
+        host: '*'
+      - resource:
+          type: group
+          name: '*'
+          patternType: literal
+        operations:
+         - All
+        host: '*'
+      - resource:
+          type: cluster
+          name: dev-cluster
+          patternType: literal
+        operations:
+          - All
+        host: '*'
 # kubectl get secret app-producer -o jsonpath='{.data.password}' -n kafka | base64 -d;echo
 # kubectl get secret app-consumer -o jsonpath='{.data.password}' -n kafka | base64 -d;echo
+# kubectl get secret admin-dev -o jsonpath='{.data.password}' -n kafka | base64 -d;echo
+# kubectl get secret admin-dev -o jsonpath='{.data.sasl\.jaas\.config}' -n kafka | base64 -d;echo
