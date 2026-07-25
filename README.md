@@ -103,7 +103,6 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
 - [x] OpenTelemetry and Tempo
 - [x] Milvus on AI node
 - [x] Apache Kafka on KRaft mode
-  - [ ] Conduktor as Kafka UI
 - [ ] Create a single disk StorageClass with CRUSH mapping for Postgres
 - [ ] Jenkins CICD
 - [ ] Apache Nifi
@@ -120,7 +119,6 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
   - [X] Grafana (use ini config)
   - [ ] Ceph Dashboard
   - [ ] Kibana
-  - [ ] Kafka Conduktor
   - [ ] Jenkins
 
 #### Hardware setup on Cluster
