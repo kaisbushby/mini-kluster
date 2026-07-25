@@ -5,14 +5,9 @@ config:
   # Follow instructions to configure Keycloak client
   # https://oauth2-proxy.github.io/oauth2-proxy/configuration/providers/keycloak_oidc
 
-  # Oauth2 client configuration. From Keycloak configuration
-  clientID: "oauth2-proxy"
-  clientSecret: "OEaQN4bqooLPMhF9V82GwOIUVSoAzjH5"
+  # Oauth2 client configuration. Override with environment variables
+  requiredSecretKeys:
 
-  # Cookie secret
-  # Create a new secret with the following command
-  # openssl rand -base64 32 | head -c 32 | base64
-  cookieSecret: "bG5pRDBvL0VaWis3dksrZ05vYnJLclRFb2VNcVZJYkg="
   # The name of the cookie that oauth2-proxy will create
   # If left empty, it will default to the release name
   cookieName: "oauth2-proxy"
@@ -35,6 +30,21 @@ config:
     scope="openid email profile"
     whitelist_domains=[".homelab.kbushby.com"]
     insecure_oidc_allow_unverified_email="true"
+
+extraEnv:
+  - name: OAUTH2_PROXY_CLIENT_ID
+    value: oauth2-proxy
+  - name: OAUTH2_PROXY_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: oauth2-proxy-oidc-secret
+        key: secret
+  - name: OAUTH2_PROXY_COOKIE_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: oauth2-proxy-oidc-secret
+        key: cookie-secret
+  
 
 sessionStorage:
   # Can be one of the supported session storage cookie|redis
