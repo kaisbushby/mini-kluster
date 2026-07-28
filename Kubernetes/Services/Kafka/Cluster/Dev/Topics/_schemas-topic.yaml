@@ -1,0 +1,17 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: schemas-topic
+  namespace: kafka
+  labels:
+    # Link this topic to the cluster
+    strimzi.io/cluster: dev-cluster
+spec:
+  topicName: _schemas
+  partitions: 1
+  replicas: 3
+  config:
+    retention.ms: -1                  # Never expire
+    retention.bytes: -1
+    cleanup.policy: compact
+    min.insync.replicas: 2

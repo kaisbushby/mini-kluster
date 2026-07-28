@@ -102,9 +102,9 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
 - [x] Fluentbit + Loki for Grafana
 - [x] OpenTelemetry and Tempo
 - [x] Milvus on AI node
-- [x] Apache Kafka on KRaft mode
+- [ ] Apache Kafka on KRaft mode
   - [ ] Schema Registry
-  - [ ] ksqlDB
+  - [ ] Apache Flink
   - [ ] Kafka Connect
 - [ ] Create a single disk StorageClass with CRUSH mapping for Postgres
 - [ ] Jenkins CICD

@@ -1,0 +1,45 @@
+# https://oneuptime.com/blog/post/2026-01-17-helm-kafka-kubernetes-deployment/view#deploy-schema-registry
+
+global:
+  security:
+    allowInsecureImages: true
+
+# schema-registry-values.yaml
+replicaCount: 2
+
+image:
+  repository: confluentinc/cp-schema-registry
+  tag: 8.2.2
+
+kafka:
+  enabled: false
+
+externalKafka:
+  brokers:
+    - PLAINTEXT://dev-cluster-kafka-bootstrap.kafka.svc.local:9092
+
+resources:
+  requests:
+    memory: 128Mi
+    cpu: 64m
+  limits:
+    memory: 1Gi
+    cpu: 500m
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hostname: schema-registry.kafka.homelab.kbushby.com
+  path: /
+  pathType: Prefix
+  annotations:
+    # ExternalDNS entry
+    external-dns.alpha.kubernetes.io/hostname: schema-registry.kafka.homelab.kbushby.com
+    # Enable cert-manager to create automatically the SSL certificate and store in Secret
+    cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+    cert-manager.io/common-name: schema-registry.kafka.homelab.kbushby.com
+  tls: true
+  existingSecret: schema-registry-tls
+
+# helm upgrade --install schema-registry bitnami/schema-registry --namespace kafka -f schema-registry-values.yaml --history-max=3
+# helm uninstall schema-registry -n kafka

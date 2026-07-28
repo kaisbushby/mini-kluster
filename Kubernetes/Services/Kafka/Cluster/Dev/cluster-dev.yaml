@@ -35,23 +35,22 @@ metadata:
   name: dev-cluster
   namespace: kafka
   annotations:
-    strimzi.io/node-pools: enabled
     strimzi.io/kraft: enabled
+    strimzi.io/node-pools: enabled
 spec:
   kafka:
     version: 4.2.0
-    metadataVersion: 4.2-IV1
     logging:
       type: inline
       loggers:
-        rootLogger.level: "OFF"
-        logger.kafka.level: "OFF"
-        logger.orgapachekafka.level: "OFF"
-        logger.requestlogger.level: "OFF"
-        logger.requestchannel.level: "OFF"
-        logger.controller.level: "OFF"
-        logger.logcleaner.level: "OFF"
-        logger.statechange.level: "OFF"
+        # rootLogger.level: "OFF"
+        # logger.kafka.level: "OFF"
+        # logger.orgapachekafka.level: "OFF"
+        # logger.requestlogger.level: "OFF"
+        # logger.requestchannel.level: "OFF"
+        # logger.controller.level: "OFF"
+        # logger.logcleaner.level: "OFF"
+        # logger.statechange.level: "OFF"
     listeners:
       # Internal listener for in-cluster communication
       - name: plain
@@ -102,7 +101,7 @@ spec:
     authorization:
       type: simple
     config:
-      delete.topic.enable: "true"
+      delete.topic.enable: true
       # Use 3 partitions by default for new topics
       num.partitions: 3
       
@@ -112,25 +111,31 @@ spec:
       transaction.state.log.min.isr: 2
       default.replication.factor: 3
       min.insync.replicas: 2
+
       # Flush settings (RBD handles durability at block level)
       log.flush.interval.messages: "9223372036854775807"
       log.flush.interval.ms: "9223372036854775807"
+
       # Disable periodic flush check (let OS handle flushing)
       log.flush.scheduler.interval.ms: "9223372036854775807"
 
-      # 5 minutes
+      # # 5 minutes
       initial.broker.registration.timeout.ms: 300000
 
-      # 100 seconds
-      heartbeat.interval.ms: 100000
+      # # 100 seconds
+      # heartbeat.interval.ms: 100000
 
-      # 5 minutes
-      session.timeout.ms: 300000
+      # # 5 minutes
+      # session.timeout.ms: 300000
 
-      # Set the minimum allowed consumer session timeout to 10 seconds
-      group.min.session.timeout.ms: 10000
-      # Set the maximum allowed consumer session timeout to 45 minutes
-      group.max.session.timeout.ms: 2700000
+      controller.quorum.election.timeout.ms: 100000
+      controller.quorum.fetch.timeout.ms: 100000
+      controller.quorum.retry.backoff.ms: 100000
+
+      # # Set the minimum allowed consumer session timeout to 10 seconds
+      # group.min.session.timeout.ms: 10000
+      # # Set the maximum allowed consumer session timeout to 45 minutes
+      # group.max.session.timeout.ms: 2700000
     
     metricsConfig:
       type: jmxPrometheusExporter

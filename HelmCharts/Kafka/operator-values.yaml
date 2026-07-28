@@ -1,0 +1,21 @@
+resources:
+  limits:
+    memory: 384Mi
+    cpu: 1000m
+  requests:
+    memory: 64Mi
+    cpu: 50m
+
+extraEnvs:
+  - name: KUBERNETES_CONNECTION_TIMEOUT
+    value: "90000"
+  - name: KUBERNETES_WEBSOCKET_TIMEOUT
+    value: "50000"
+  - name: KUBERNETES_REQUEST_TIMEOUT
+    value: "90000"
+
+# helm upgrade --install strimzi-kafka-operator strimzi/strimzi-kafka-operator --namespace kafka -f operator-values.yaml --history-max=3
+# helm uninstall strimzi-kafka-operator -n kafka
+
+
+# https://oneuptime.com/blog/post/2026-01-17-helm-kafka-kubernetes-deployment/view
