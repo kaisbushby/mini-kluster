@@ -29,9 +29,7 @@ spec:
         operations:
           - IdempotentWrite
         host: "*"
-
 ---
-
 # Creates a user with SCRAM-SHA-512 authentication
 apiVersion: kafka.strimzi.io/v1
 kind: KafkaUser

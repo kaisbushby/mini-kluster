@@ -3,24 +3,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: schema-registry
+  name: schema-registry-dev
   namespace: kafka
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: schema-registry
+      app: schema-registry-dev
   template:
     metadata:
       labels:
-        app: schema-registry
+        app: schema-registry-dev
     spec:
       volumes:
         - name: kafka-ssl-certs
           secret:
             secretName: dev-cluster-cluster-ca-cert
       containers:
-      - name: schema-registry
+      - name: schema-registry-dev
         image: confluentinc/cp-schema-registry:7.2.0
         ports:
         - containerPort: 8081
@@ -36,10 +36,10 @@ spec:
         - name: SCHEMA_REGISTRY_HOST_NAME
           value: "$(POD_IP)"
         - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
-          value: SASL_PLAINTEXT://dev-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+          value: SASL_SSL://dev-cluster-kafka-bootstrap.kafka.svc.cluster.local:9093
           # value: "SASL_PLAINTEXT://dev-cluster-kafka-dev-0.kafka:9092, SASL_PLAINTEXT://dev-cluster-kafka-dev-1.kafka:9092, SASL_PLAINTEXT://dev-cluster-kafka-dev-2.kafka:9092"
         - name: SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL
-          value: SASL_PLAINTEXT
+          value: SASL_SSL
         - name: SCHEMA_REGISTRY_KAFKASTORE_SASL_MECHANISM
           value: SCRAM-SHA-512
         - name: SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG
@@ -50,15 +50,15 @@ spec:
 
         # TLS Config
         # https://medium.com/cj-express-tech-tildi/lets-secure-our-kafka-component-in-the-kafka-cluster-with-tls-8b73cfc4aea1
-        # - name: SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_PASSWORD
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: dev-cluster-cluster-ca-cert
-        #       key: ca.password
-        # - name: SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_LOCATION
-        #   value: "/etc/schema-registry/secrets/ca.p12"
-        # - name: SCHEMA_REGISTRY_SSL_TRUSTSTORE_TYPE
-        #   value: "PKCS12"
+        - name: SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dev-cluster-cluster-ca-cert
+              key: ca.password
+        - name: SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_LOCATION
+          value: "/etc/schema-registry/secrets/ca.p12"
+        - name: SCHEMA_REGISTRY_SSL_TRUSTSTORE_TYPE
+          value: "PKCS12"
 
         - name: SCHEMA_REGISTRY_LISTENERS
           value: "http://0.0.0.0:8081"
@@ -93,7 +93,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: schema-registry-service
+  name: schema-registry-dev-service
   namespace: kafka
 spec:
   type: ClusterIP
@@ -101,32 +101,32 @@ spec:
   - port: 8081
     name: http
   selector:
-    app: schema-registry
+    app: schema-registry-dev
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: schema-registry
+  name: schema-registry-dev
   namespace: kafka
   annotations:
     cert-manager.io/cluster-issuer: cloudflare-ca-issuer
-    cert-manager.io/common-name: schema-registry.kafka.homelab.kbushby.com
-    cert-manager.io/secret-name: schema-registry-tls
-    external-dns.alpha.kubernetes.io/hostname: schema-registry.kafka.homelab.kbushby.com
+    cert-manager.io/common-name: schema-registry.kafka.dev.homelab.kbushby.com
+    cert-manager.io/secret-name: schema-registry-dev-tls
+    external-dns.alpha.kubernetes.io/hostname: schema-registry.kafka.dev.homelab.kbushby.com
 spec:
   ingressClassName: nginx
   rules:
-  - host: schema-registry.kafka.homelab.kbushby.com
+  - host: schema-registry.kafka.dev.homelab.kbushby.com
     http:
       paths:
       - backend:
           service:
-            name: schema-registry-service
+            name: schema-registry-dev-service
             port:
               number: 8081
         path: /
         pathType: Prefix
   tls:
   - hosts:
-    - schema-registry.kafka.homelab.kbushby.com
-    secretName: schema-registry-tls
+    - schema-registry.kafka.dev.homelab.kbushby.com
+    secretName: schema-registry-dev-tls
