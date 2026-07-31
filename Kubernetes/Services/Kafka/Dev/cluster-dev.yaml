@@ -155,3 +155,4 @@ spec:
       #     rootLogger.level: "OFF"
       #     logger.controller.level: "OFF"
     
+# https://oneuptime.com/blog/post/2026-03-20-rancher-deploy-kafka/view#step-6-deploy-kafka-connect
