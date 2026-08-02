@@ -1,0 +1,160 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: nifi
+  namespace: nifi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nifi
+  template:
+    metadata:
+      labels:
+        app: nifi
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      volumes:
+        - name: nifi-ssl-certs
+          secret:
+            secretName: nifi-tls
+      containers:
+      - name: nifi-container
+        volumeMounts:
+          - name: nifi-ssl-certs
+            mountPath: /opt/certs
+        image: apache/nifi:2.10.0
+        ports:
+        - containerPort: 8443
+          name: https
+        - containerPort: 8080
+          name: http
+        - containerPort: 22
+          name: ssh
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "64Mi"
+          limits:
+            cpu: "1"
+        env:
+        - name: NIFI_WEB_PROXY_HOST
+          value: https://nifi.homelab.kbushby.com
+        - name: NIFI_WEB_PROXY_PORT
+          value: "443"
+        - name: NIFI_WEB_PROXY_CONTEXT_PATH
+          value: /
+        - name: NIFI_WEB_HTTP_PORT
+          value: "8080"
+        - name: NIFI_WEB_HTTP_HOST
+          value: 0.0.0.0
+        - name: NIFI_WEB_HTTPS_PORT
+          value: "8443"
+        - name: NIFI_WEB_HTTPS_HOST
+          value: 0.0.0.0
+        - name: KEYSTORE_PATH
+          value: /opt/certs/keystore.jks
+        - name: KEYSTORE_TYPE
+          value: JKS
+        - name: KEYSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nifi-tls-keystore
+              key: password
+        - name: TRUSTSTORE_TYPE
+          value: JKS
+        - name: TRUSTSTORE_PATH
+          value: /opt/certs/keystore.jks
+        - name: TRUSTSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nifi-tls-keystore
+              key: password
+        # - name: NIFI_CLUSTER_IS_NODE
+        #   value: "true"
+        # - name: NIFI_CLUSTER_NODE_PROTOCOL_PORT
+        #   value: "9088"
+        # - name: NIFI_ELECTION_MAX_CANDIDATES
+        #   value: "1"
+        # - name: NIFI_ZK_CONNECT_STRING
+        #   value: "zk-0.zk-hs.default.svc.cluster.local:2181,zk-1.zk-hs.default.svc.cluster.local:2181,zk-2.zk-hs.default.svc.cluster.local:2181"
+        - name: INITIAL_ADMIN_IDENTITY
+          value: admin
+        # - name: INITIAL_ADMIN_GROUP
+        #   value: adminGroup
+        - name: AUTH
+          value: oidc
+        - name: NIFI_SECURITY_USER_OIDC_DISCOVERY_URL
+          value: https://iam.homelab.kbushby.com/realms/master/.well-known/openid-configuration
+        - name: NIFI_SECURITY_USER_OIDC_CLIENT_ID
+          value: apache-nifi-oidc
+        - name: NIFI_SECURITY_USER_OIDC_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: apache-nifi-oidc-secret
+              key: secret
+        - name: NIFI_SECURITY_USER_OIDC_ADDITIONAL_SCOPES
+          value: email
+        - name: NIFI_SECURITY_USER_OIDC_CLAIM_IDENTIFYING_USER
+          value: preferred_username
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nifi-service
+  namespace: nifi
+spec:
+  selector:
+    app: nifi
+  ports:
+  - protocol: TCP
+    targetPort: 8443
+    port: 8443
+    name: ui-tls
+  - protocol: TCP
+    targetPort: 8080
+    port: 8080
+    name: ui
+  - protocol: TCP
+    targetPort: 9088
+    port: 9088
+    name: node-protocol-port
+  - protocol: TCP
+    targetPort: 8888
+    port: 8888
+    name: s2s
+  type: LoadBalancer
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apache-nifi-ingress
+  namespace: nifi
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare-ca-issuer
+    cert-manager.io/common-name: nifi.homelab.kbushby.com
+    external-dns.alpha.kubernetes.io/hostname: nifi.homelab.kbushby.com
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: nifi.homelab.kbushby.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: nifi-service
+            port:
+              number: 8443
+              # targetPort: ui
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - nifi.homelab.kbushby.com
+    secretName: nifi-tls
+
+# kubectl logs -l app=nifi -n nifi
