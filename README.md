@@ -106,7 +106,6 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
   - [X] Schema Registry
   - [ ] Apache Flink
   - [ ] Kafka Connect
-- [ ] Create a single disk StorageClass with CRUSH mapping for Postgres
 - [ ] Jenkins CICD
 - [X] Apache Nifi
 - [X] ntfy
@@ -124,6 +123,7 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
   - [ ] Ceph Dashboard
   - [ ] Kibana
   - [ ] Jenkins
+- [ ] Knative
 
 #### Hardware setup on Cluster
 
