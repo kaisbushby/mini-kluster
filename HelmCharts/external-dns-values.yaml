@@ -54,6 +54,7 @@ sources:
 
 domainFilters:
   - homelab.kbushby.com
+  - kbushby.com
 
 metrics:
   enabled: true
