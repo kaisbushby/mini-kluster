@@ -1,0 +1,23 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: ntfy-db
+  namespace: ntfy
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.3-4
+  storage:
+    size: 1Gi
+    storageClass: rook-ceph-block
+  monitoring:
+    enablePodMonitor: true
+  bootstrap:
+    initdb:
+      database: ntfy
+      # Secret with the password will be auto generated
+      owner: ntfyadmin
+      # kubectl get secret -n postgresql-dev cnpg-db-app -o=jsonpath='{.data.password}' | base64 --decode; echo
+  postgresql:
+    pg_hba:
+      - hostssl all all 0.0.0.0/0 scram-sha-256
+      - host all all 0.0.0.0/0 scram-sha-256
