@@ -109,7 +109,7 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
 - [ ] Create a single disk StorageClass with CRUSH mapping for Postgres
 - [ ] Jenkins CICD
 - [X] Apache Nifi
-- [ ] Fix ntfy
+- [X] ntfy
 - [X] Move OIDC Secrets to HashiCorp Vault
 - [ ] Add SSO to services
   - [X] Rancher
