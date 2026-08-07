@@ -18,6 +18,10 @@ spec:
     #     name: mongodb-ca-cert
     authentication:
       modes: ["SCRAM"]
+  agent:
+    logLevel: "ERROR"
+  additionalMongodConfig:
+    systemLog.quiet: true
   users:
     - name: admin
       db: admin

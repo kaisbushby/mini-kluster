@@ -7,6 +7,9 @@ deploymentMode: SimpleScalable
 loki:
   auth_enabled: false
 
+  server:
+    log_level: warn
+
   compactor:
     compaction_interval: 10m
     delete_request_store: s3
