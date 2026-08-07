@@ -19,7 +19,7 @@ spec:
           resources:
             requests:
               cpu: 100m
-              storage: 25Gi
+              storage: 30Gi
             limits:
               cpu: "1"
           storageClassName: rook-ceph-block
@@ -36,9 +36,7 @@ spec:
     tls: # Disabling TLS automatic configuration.
       selfSignedCertificate:
         disabled: true
-
 ---
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -64,7 +62,6 @@ spec:
   - hosts:
     - elasticsearch.homelab.kbushby.com
     secretName: elasticsearch-tls
-
 ---
 # Custom Roles
 # https://www.elastic.co/guide/en/cloud-on-k8s/2.0/k8s-users-and-roles.html#k8s_creating_custom_roles
@@ -118,7 +115,6 @@ stringData:
       indices:
       - names: [ 'logs-*.otel-*', 'metrics-*.otel-*', 'traces-*.otel-*' ]
         privileges: [ 'auto_configure', 'create_doc', 'create_index' ]
-
 ---
 # Fluentd + Prometheus + OpenTelemetry Users
 ---
@@ -156,7 +152,5 @@ data:
   roles: "dGVsZW1ldHJ5X3JvbGU=" # telemetry_role
 
 # echo -n "TEXT" | base64
-
-
 # Username is "elastic"
 # kubectl get secret -n elastic efk-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
