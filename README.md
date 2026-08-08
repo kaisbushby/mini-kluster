@@ -121,7 +121,6 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
   - [X] Grafana (use ini config)
   - [X] Apache NiFi
   - [ ] Ceph Dashboard
-  - [ ] Kibana
   - [X] Jenkins
 - [ ] Knative
 
