@@ -11,13 +11,4 @@ ingress:
     source: "secret"
     secretName: rancher-tls
 
-# Using existing CertManager/LetsEncrypt via annotations
-#letsEncrypt:
-#  environment: production
-#  email: "kaisbushby@gmail.com"
-#  ingress:
-#    class: "nginx"
-
-bootstrapPassword: "admin"
-
 # helm upgrade --install rancher rancher-stable/rancher --namespace cattle-system -f rancher-values.yaml --history-max=3
