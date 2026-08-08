@@ -85,7 +85,7 @@ config:
         # Add filename key to the record
         path_key: filename
         # Enable buil-in multi-line cri parser
-        multiline.parser: cri, java, go, python
+        multiline.parser: cri, docker, java, go, python
         # Set kube. prefix in the predefined tag (filepath)
         tag: kube.*
         # Enable tail state feature
@@ -114,7 +114,7 @@ config:
     - name: multiline
       match: '*'
       multiline.key_content: log
-      multiline.parser: java, go, python
+      multiline.parser: docker, java, go, python
 
     - name: kubernetes
       match: kube.*
@@ -136,6 +136,7 @@ config:
       operation: lift
       nested_under: kubernetes
       add_prefix: kubernetes_
+
     - name: modify
       match: kube.*
       Rename: 
@@ -150,6 +151,12 @@ config:
         - _p
       Remove_wildcard:
         - kubernetes_
+
+    # Removes MongoDB logs
+    - name: grep
+      match: kube.*
+      exclude: container mongod
+
     outputs:
       - name: forward
         alias: output.aggregator
