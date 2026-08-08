@@ -21,7 +21,8 @@ spec:
   agent:
     logLevel: "ERROR"
   additionalMongodConfig:
-    systemLog.quiet: true
+    systemLog:
+      quiet: true
   users:
     - name: admin
       db: admin
