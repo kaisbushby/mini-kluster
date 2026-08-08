@@ -1,5 +1,8 @@
 
 controller:
+  image:
+    pullPolicy: IfNotPresent
+
   # Pod disruption budget ensures availability during updates
   podDisruptionBudget:
     enabled: true
@@ -25,16 +28,59 @@ controller:
     - oic-auth:latest
     - cloudbees-folder:latest
 
+  # Environment variables
+  containerEnv:
+    - name: OIDC_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: jenkins-oidc-secret
+          key: secret
+
   # Enable Jenkins Configuration as Code
   JCasC:
     enabled: true
     defaultConfig: true
+    securityRealm : |-
+      oic:
+        serverConfiguration:
+          manual:
+            authorizationServerUrl: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/auth
+            endSessionUrl: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/logout
+            jwksServerUrl: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/certs
+            tokenAuthMethod: client_secret_basic
+            tokenServerUrl: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/token
+            scopes: "openid profile email groups"
+            userInfoServerUrl: https://iam.homelab.kbushby.com/realms/master/protocol/openid-connect/userinfo
+            useRefreshTokens: true
+            issuer: https://iam.homelab.kbushby.com/realms/master
+        # Credentials
+        clientId: "jenkins-oidc"
+        clientSecret: "${OIDC_CLIENT_SECRET}"
+        # Claims
+        userNameField: "preferred_username"
+        userIdStrategy: "caseSensitive"
+        fullNameFieldName: "preferred_username"
+        emailFieldName: "email"
+        groupsFieldName: "groups"
+        groupIdStrategy: "caseSensitive"
+        # Additional Config
+        logoutFromOpenidProvider: true
+        postLogoutRedirectUrl: "https://iam.homelab.kbushby.com/realms/master/.well-known/openid-configuration"
+        # Security
+        disableSslVerification: false
+        
+  sidecars:
+    configAutoReload:
+      logging:
+        configuration:
+          override: true
+          logLevel: WARN
 
   # -- Resource allocation (Requests and Limits)
   resources:
     requests:
       cpu: "50m"
-      memory: "256Mi"
+      memory: "128Mi"
     limits:
       cpu: "2000m"
       memory: "4096Mi"
@@ -59,8 +105,8 @@ controller:
 # Persistent storage for Jenkins home directory
 persistence:
   enabled: true
+  # Use existing claim
   existingClaim: jenkins-pv-claim 
-  # Using Existing Claims instead
   # storageClass: rook-ceph-block  # Leave empty to use default storage class
   # size: "20Gi"
   # accessMode: ReadWriteOnce
@@ -78,7 +124,7 @@ agent:
         containers:
           - name: jnlp
             image: jenkins/inbound-agent:latest
-            resourceRequestCpu: "100m"
+            resourceRequestCpu: "50m"
             resourceRequestMemory: "128Mi"
             resourceLimitCpu: "1000m"
             resourceLimitMemory: "1Gi"

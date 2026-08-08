@@ -106,7 +106,7 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
   - [X] Schema Registry
   - [ ] Apache Flink
   - [ ] Kafka Connect
-- [ ] Jenkins CICD
+- [X] Jenkins CICD
 - [X] Apache Nifi
 - [X] ntfy
 - [X] Move OIDC Secrets to HashiCorp Vault
@@ -122,7 +122,7 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
   - [X] Apache NiFi
   - [ ] Ceph Dashboard
   - [ ] Kibana
-  - [ ] Jenkins
+  - [X] Jenkins
 - [ ] Knative
 
 #### Hardware setup on Cluster
