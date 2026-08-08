@@ -85,7 +85,7 @@ config:
         # Add filename key to the record
         path_key: filename
         # Enable buil-in multi-line cri parser
-        multiline.parser: cri
+        multiline.parser: cri, java, go, python
         # Set kube. prefix in the predefined tag (filepath)
         tag: kube.*
         # Enable tail state feature
@@ -114,7 +114,7 @@ config:
     - name: multiline
       match: '*'
       multiline.key_content: log
-      multiline.parser: go, java, python
+      multiline.parser: java, go, python
 
     - name: kubernetes
       match: kube.*
@@ -210,5 +210,4 @@ dashboards:
     grafana_folder: "Logging"
 
 # helm upgrade --install fluent-bit-collector fluent/fluent-bit-collector --namespace fluent -f fluent-bit-collector-values.yaml --history-max=3
-
 # helm uninstall fluent-bit-collector -n fluent
