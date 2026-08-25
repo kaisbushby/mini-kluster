@@ -22,6 +22,19 @@ traces:
     thriftHttp:
       enabled: true
 
+# Credentials configuration
+global:
+  extraEnv:
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: tempo-s3-secret
+          key: access-key
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: tempo-s3-secret
+          key: secret-key
 
 # Storage configuration
 storage:
@@ -31,8 +44,6 @@ storage:
       bucket: k3s-tempo
       endpoint: rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
       region: ceph-objectstore
-      access_key: F7FED84U1CU1ISSXTVOI
-      secret_key: RvoxNzd3h4hDhkEQR9RjQ9hRGvzArANtN1EMPtoq
       insecure: true
 
 # Distributor
@@ -187,5 +198,5 @@ memcached:
 minio:
   enabled: false
 
-# helm upgrade --install tempo grafana-community/tempo-distributed --namespace tempo -f tempo-values.yaml --history-max=3
+# helm upgrade --install tempo grafana-community/tempo-distributed --namespace tempo -f tempo-values.yaml --history-max=3  --version 2.26.2
 # helm uninstall tempo -n tempo 

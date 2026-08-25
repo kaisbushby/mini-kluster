@@ -4,6 +4,19 @@
 
 deploymentMode: SimpleScalable
 
+global:
+  extraEnv:
+    - name: S3_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: loki-s3-secret
+          key: access-key
+    - name: S3_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: loki-s3-secret
+          key: secret-key
+
 loki:
   auth_enabled: false
 
@@ -26,8 +39,8 @@ loki:
     s3:
       endpoint: rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
       region: ceph-objectstore
-      accessKeyId: VCHB14NSPY09MP38RNBT
-      secretAccessKey: t2xJy0c6ICj3DX6az4kVUBRRJoACepHKGfVrlDw3
+      accessKeyId: "${S3_ACCESS_KEY_ID}"
+      secretAccessKey: "${S3_SECRET_ACCESS_KEY}"
       s3ForcePathStyle: true
       insecure: true
       http_config:
