@@ -27,6 +27,7 @@ controller:
     - pipeline-utility-steps:latest
     - oic-auth:latest
     - cloudbees-folder:latest
+    - coverage:latest
 
   # Environment variables
   containerEnv:
