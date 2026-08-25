@@ -21,8 +21,6 @@ traces:
       enabled: true
     thriftHttp:
       enabled: true
-  opencensus:
-    enabled: true
 
 
 # Storage configuration
@@ -185,7 +183,6 @@ memcached:
     limits:
       cpu: 500m
       memory: 1Gi
-
 
 minio:
   enabled: false
