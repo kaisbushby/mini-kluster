@@ -1,0 +1,7 @@
+apiVersion: ceph.rook.io/v1
+kind: CephObjectZoneGroup
+metadata:
+  name: ceph-s3-dev
+  namespace: rook-ceph
+spec:
+  realm: ceph-s3-dev

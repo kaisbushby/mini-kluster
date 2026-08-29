@@ -1,0 +1,17 @@
+apiVersion: ceph.rook.io/v1
+kind: CephObjectZone
+metadata:
+  name: ceph-s3-dev
+  namespace: rook-ceph
+spec:
+  zoneGroup: ceph-s3-dev
+  metadataPool:
+    failureDomain: host
+    replicated:
+      size: 3
+  dataPool:
+    failureDomain: osd
+    deviceClass: hdd
+    erasureCoded:
+      dataChunks: 2
+      codingChunks: 1
