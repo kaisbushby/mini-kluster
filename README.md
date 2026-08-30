@@ -41,13 +41,13 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
 | <img width=35 src="/assets/icons/Rook.svg" />                | Rook Ceph                   | Storage                | Storage Orchestrator for Kubernetes. Provides Block, NFS and S3 compatible bucket storage |
 | <img width=35 src="/assets/icons/ESO.svg" />                 | External Secrets Operator   | Secrets/Certificates   | Syncs Kubernetes secrets with Hashicorp secrets  |
 | <img width=35 src="/assets/icons/CertManager.svg" />         | CertManager                 | Secrets/Certificates   | Manages and registers TLS Certificates |
-| <img width=35 src="/assets/icons/Prometheus.svg" />          | Prometheus                  | Observibility          | Real-time metrics monitoring |
-| <img width=35 src="/assets/icons/Grafana.svg" />             | Grafana                     | Observibility          | UI for Metrics/Logs/Telemetry |
-| <img width=35 src="/assets/icons/Fluentbit.svg" />           | Fluentbit                   | Observibility          | Log collector and aggregation |
-| <img width=35 src="/assets/icons/Loki.svg" />                | Loki                        | Observibility          | Log aggregation for Grafana |
-| <img width=35 src="/assets/icons/Elastic Search.svg" />      | Elastic Search              | Observibility          | Log storage/analytics |
-| <img width=35 src="/assets/icons/Kibana.svg" />              | Kibana                      | Observibility          | UI for ElasticSearch |
-| <img width=35 src="/assets/icons/Tempo.svg" />               | Tempo                       | Observibility          | Open-Telemetry monitoring |
+| <img width=35 src="/assets/icons/Prometheus.svg" />          | Prometheus                  | Observability          | Real-time metrics monitoring |
+| <img width=35 src="/assets/icons/Grafana.svg" />             | Grafana                     | Observability          | UI for Metrics/Logs/Telemetry |
+| <img width=35 src="/assets/icons/Fluentbit.svg" />           | Fluentbit                   | Observability          | Log collector and aggregation |
+| <img width=35 src="/assets/icons/Loki.svg" />                | Loki                        | Observability          | Log aggregation for Grafana |
+| <img width=35 src="/assets/icons/Elastic Search.svg" />      | Elastic Search              | Observability          | Log storage/analytics |
+| <img width=35 src="/assets/icons/Kibana.svg" />              | Kibana                      | Observability          | UI for ElasticSearch |
+| <img width=35 src="/assets/icons/Tempo.svg" />               | Tempo                       | Observability          | Open-Telemetry monitoring |
 | <img width=35 src="/assets/icons/Keycloak.svg" />            | Keycloak                    | Security               | Identity Provider |
 | <img width=35 src="/assets/icons/OAuth2-Proxy.svg" />        | OAuth2-Proxy                | Security               | Provides OIDC security to insecure applications |
 | <img width=35 src="/assets/icons/Apache Kafka.svg" />        | Kafka                       | Micro Service          | Real-time event/data streaming platform |
