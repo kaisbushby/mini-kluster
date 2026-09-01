@@ -127,7 +127,7 @@ Added an LLM inferencing node, which was made using spare PC parts, RTX 4080 and
 #### Hardware setup on Cluster
 
 - [x] 8 port switch
-- [x] Geepki 12U Mini rack
+- [x] Geekpi 12U Mini rack
 - [x] 6th cluster node
 - [x] HDDs for Kubernetes Storage
 - [x] Replace 8 port switch with a 16 port switch
