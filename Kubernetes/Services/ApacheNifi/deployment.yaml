@@ -1,6 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
-
+kind: StatefulSet
 metadata:
   name: nifi
   namespace: nifi
@@ -16,16 +15,32 @@ spec:
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
-      volumes:
-        - name: nifi-ssl-certs
-          secret:
-            secretName: nifi-tls
+      securityContext:
+        fsGroup: 2000
+      initContainers:
+        - name: copy-nifi-files
+          image: apache/nifi:2.12.0
+          command: ["sh", "-c"]
+          args:
+          - |
+            mkdir -p /mnt/nifi-pvc/conf                  
+            mkdir -p /mnt/nifi-pvc/database_repository   
+            mkdir -p /mnt/nifi-pvc/flowfile_repository   
+            mkdir -p /mnt/nifi-pvc/content_repository    
+            mkdir -p /mnt/nifi-pvc/provenance_repository 
+            mkdir -p /mnt/nifi-pvc/state                 
+            cp -rn /opt/nifi/nifi-current/conf                    /mnt/nifi-pvc
+            cp -rn /opt/nifi/nifi-current/database_repository     /mnt/nifi-pvc
+            cp -rn /opt/nifi/nifi-current/flowfile_repository     /mnt/nifi-pvc
+            cp -rn /opt/nifi/nifi-current/content_repository      /mnt/nifi-pvc
+            cp -rn /opt/nifi/nifi-current/provenance_repository   /mnt/nifi-pvc
+            cp -rn /opt/nifi/nifi-current/state                   /mnt/nifi-pvc
+          volumeMounts:
+          - name: nifi-pvc-mount
+            mountPath: /mnt/nifi-pvc
       containers:
       - name: nifi-container
-        volumeMounts:
-          - name: nifi-ssl-certs
-            mountPath: /opt/certs
-        image: apache/nifi:2.10.0
+        image: apache/nifi:2.12.0
         ports:
         - containerPort: 8443
           name: https
@@ -39,6 +54,29 @@ spec:
             memory: "64Mi"
           limits:
             cpu: "1"
+        volumeMounts:
+          - mountPath: /opt/certs
+            name: nifi-ssl-certs
+          - mountPath: /opt/nifi/nifi-current/conf
+            name: nifi-pvc-mount
+            subPath: conf
+          - mountPath: /opt/nifi/nifi-current/database_repository
+            name: nifi-pvc-mount
+            subPath: database_repository
+          - mountPath: /opt/nifi/nifi-current/flowfile_repository
+            name: nifi-pvc-mount
+            subPath: flowfile_repository  
+          - mountPath: /opt/nifi/nifi-current/content_repository
+            name: nifi-pvc-mount
+            subPath: content_repository  
+          - mountPath: /opt/nifi/nifi-current/provenance_repository
+            name: nifi-pvc-mount
+            subPath: provenance_repository
+          - mountPath: /opt/nifi/nifi-current/state
+            name: nifi-pvc-mount
+            subPath: state
+          - mountPath: /mnt/nifi
+            name: nifi-pvc-mount
         env:
         - name: NIFI_WEB_PROXY_HOST
           value: https://nifi.homelab.kbushby.com
@@ -96,9 +134,22 @@ spec:
               name: apache-nifi-oidc-secret
               key: secret
         - name: NIFI_SECURITY_USER_OIDC_ADDITIONAL_SCOPES
-          value: email
+          value: offline_access
         - name: NIFI_SECURITY_USER_OIDC_CLAIM_IDENTIFYING_USER
           value: preferred_username
+      volumes:
+        - name: nifi-ssl-certs
+          secret:
+            secretName: nifi-tls
+  volumeClaimTemplates:
+  - metadata:
+      name: nifi-pvc-mount
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "rook-ceph-block"
+      resources:
+        requests:
+          storage: 10Gi
 ---
 apiVersion: v1
 kind: Service
@@ -126,7 +177,6 @@ spec:
     port: 8888
     name: s2s
   type: LoadBalancer
-
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
