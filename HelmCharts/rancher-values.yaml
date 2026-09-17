@@ -7,6 +7,8 @@ ingress:
     cert-manager.io/cluster-issuer: cloudflare-ca-issuer
     cert-manager.io/common-name: rancher.homelab.kbushby.com
     cert-manager.io/certificate-name: rancher-tls
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
   tls:
     source: "secret"
     secretName: rancher-tls
