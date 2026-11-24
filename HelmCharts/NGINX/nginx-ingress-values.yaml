@@ -30,12 +30,12 @@ controller:
     log-format-upstream: '{"source": "nginx", "time": $msec, "resp_body_size": $body_bytes_sent, "request_host": "$http_host", "request_address": "$remote_addr", "request_length": $request_length, "request_method": "$request_method", "uri": "$request_uri", "status": $status,  "user_agent": "$http_user_agent", "resp_time": $request_time, "upstream_addr": "$upstream_addr", "trace_id": "$opentelemetry_trace_id", "span_id": "$opentelemetry_span_id"}'
 
   # controller extra Volume
-  extraVolumeMounts:
-    - name: data
-      mountPath: /data
-  extraVolumes:
+  volumes:
     - name: data
       emptyDir: {}
+  volumeMounts:
+    - name: data
+      mountPath: /data
   extraContainers:
     - name: stream-accesslog
       image: busybox
@@ -56,4 +56,4 @@ controller:
     annotations:
       io.cilium/lb-ipam-pool: nginx-ingress-pool
 
-# helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx -f nginx-ingress-values.yaml --namespace nginx --history-max=3
+# helm upgrade --install nginx-ingress nginx/nginx-ingress -f nginx-ingress-values.yaml --namespace nginx --history-max=3
