@@ -187,7 +187,7 @@ metadata:
     cert-manager.io/cluster-issuer: cloudflare-ca-issuer
     cert-manager.io/common-name: nifi.homelab.kbushby.com
     external-dns.alpha.kubernetes.io/hostname: nifi.homelab.kbushby.com
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.org/ssl-services: "nifi-service"
 spec:
   ingressClassName: nginx
   rules:

@@ -36,10 +36,8 @@ ingress:
 
   ## Ingress annotations
   annotations:
-    # Enable basic auth
-    #nginx.ingress.kubernetes.io/auth-type: basic
-    # Secret defined in nginx namespace
-    #nginx.ingress.kubernetes.io/auth-secret: nginx/basic-auth-secret
+    # Enable OAuth2-Proxy security
+    nginx.org/policies: oauth2-proxy/oauth2-proxy-policy
     # Enable cert-manager to create automatically the SSL certificate and store in Secret
     # Possible Cluster-Issuer values: 
     #   * 'letsencrypt-issuer' (valid TLS certificate using IONOS API) 

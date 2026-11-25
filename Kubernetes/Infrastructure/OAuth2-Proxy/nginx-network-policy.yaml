@@ -1,0 +1,14 @@
+apiVersion: k8s.nginx.org/v1
+kind: Policy
+metadata:
+  name: oauth2-proxy-policy
+  namespace: oauth2-proxy
+spec:
+  externalAuth:
+    authURI: "/oauth2/auth"
+    authSigninURI: "/oauth2/start?rd=https://$host$request_uri"
+    authServiceName: "oauth2-proxy/oauth2-proxy"
+
+    authResponseHeaders:
+      - X-Auth-Request-User
+      - X-Auth-Request-Email
